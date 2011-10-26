@@ -96,10 +96,10 @@
         var value = $(elem).val();
         if (elem.type == 'checkbox') {
           if (elem.name.indexOf('[') != -1) {
-            var value = [];
+            value = [];
             $('[name="' + elem.name + '"]:checked').each(function(){ value.push(this.value) });
           } else {
-            var value = $(elem).is(':checked');
+            value = $(elem).is(':checked');
           }
         }
         try {
