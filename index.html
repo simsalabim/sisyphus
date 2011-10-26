@@ -6,9 +6,18 @@
     <script type="text/javascript" src="vendor/jquery.uniform/jquery.uniform.min.js"></script>
     <link rel="stylesheet" type="text/css" href="vendor/jquery.uniform/css/uniform.default.css" media="screen" charset="utf-8" />
     <style type="text/css">
-      .content{ margin: 0 auto; width: 960px;  font-family: Arial; font-size: 12px;}
-      .left{ float: left;margin: 30px 0 0 40px; width: 30%;}
-      .sample{width: 55%; display: inline; float: left; padding: 0 10px;}
+      .content{ margin: 0 auto; width: 960px;  font-family: Arial; font-size: 12px; line-height: 18px;}
+      .left{ float: left;margin: 30px 0 0 40px; width: 33%;}
+       h1 { color: #000; font-size: 3.8em; margin: 50px 0 30px 0; padding: 0 0 0 30px;}
+       h1 a {color: #000; text-decoration: none;}
+      .download { float: right; }
+      .small {font-size: 0.4em;}
+      .sample{width: 60%; display: inline; float: left; padding: 0 10px;}
+      .description { margin: 30px 0 0 0; }
+      .action { text-decoration: underline; cursor: pointer; color: #4F7EEA; }
+       pre.code { background: #000000;  color: #FFFFFF; padding: 10px;  font-family: Monaco,Consolas,"Lucida Console",monospace; 
+        margin: 10px 0;}
+       span.code { background: #E0DEDE; padding: 1px 5px; }
       .text { margin: 10px 0 0 0;}
       .field { margin: 10px 0 20px 0;}
       .input-label { display: block; margin: 0 0 5px 0;}
@@ -37,7 +46,21 @@
     </script>
   </head>
   <body>
+    <a href="http://github.com/simsalabim/sisyphus" class="fork-me">
+      <img alt="Fork me on GitHub" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" style="position: absolute; top: 0; right: 0; border: 0;">
+    </a>
     <div class="content">
+      <div class="download">
+        <a href="http://github.com/simsalabim/sisyphus/zipball/master">
+          <img width="90" border="0" src="http://github.com/images/modules/download/zip.png"></a>
+        <a href="http://github.com/simsalabim/sisyphus/tarball/master">
+          <img width="90" border="0" src="http://github.com/images/modules/download/tar.png"></a>
+      </div>
+      <h1>
+        <a href="http://github.com/simsalabim/sisyphus">Sisyphus</a>
+        <span class="small">by <a href="http://github.com/simsalabim">simsalabim</a></span>
+      </h1>
+      
       <div class="left">
         <img src="img/sisyphus.gif" />
         <div class="text">
@@ -46,26 +69,43 @@
           mistakenly, or electricity is turned off, or something else break your efforts. 
           Disgusting, huh?</p>
 
-          <p>With Sisyphus.js on site you just reopen page in your modern (with HTML 5 support) browser
-          and see all your changes at that forms. It's lightweight (1Kb) jQuery plugin uses Local 
-          Storage to prevent your work be lost. And Sisyphus is easy to use and needs you just to 
+          <p>With <strong>Sisyphus</strong> on site you just reopen page in your modern (with HTML5 support) browser
+          and see all your changes at that forms. It's lightweight <strong>(1Kb)</strong> jQuery plugin uses Local 
+          Storage to prevent your work being lost. And Sisyphus is easy to use and needs you just to 
           select forms to protect:</p>
-          <code>$('#form1', '#specialForm').sisyphus();</code>
+          
+          <pre class="code">$('#form1, #specialForm').sisyphus();</pre>
           
           <p>Local Storage will be freed of these forms values on submit or reset.
           That's it!</p>
         </div>
+        
+        <h2>Dependencies</h2>
+        <p>jQuery >= 1.1</p>
+        <p>HTML5 supporting browser (tested with FF5, Chrome 14.0.835.202 m)</p>
+        
+        <h2>License</h2>
+        <p>Sisyphus is released under MIT License</p>
+        
+        <h2>Authors</h2>
+        <p>Alexander Kaupanin &lt;kaupanin@gmail.com&gt;</p>
+        
+        <h2>Contact</h2>
+        <p>Alexander Kaupanin &lt;kaupanin@gmail.com&gt;</p>
       </div>
       <div class="sample">
+        <div class="description">
+          Here you may fill forms below in arbitrary way, then close your tab/browser, <span onclick="window.location.reload()" class="action">refresh window</span> or open this page in a <a href="http://simsalabim.github.com/sisyphus/" class="action" target="_blank">new tab</a> to see all your changes are saved and restored.
+        </div>
         <fieldset class="form-wrap">
           <legend class="form-legend">Form 1</legend>
           <form name="mydata" id="form1" method="post">
             <div class="field">
-              <label for="name" class="input-label">Input Text:</label>
+              <label for="name" class="input-label">Input Text <span class="code">[name="name"]</span>:</label>
               <input type="text" name="name" value="" id="name" class="width-all"/>
             </div>
             <div class="field">
-              <label for="story" class="input-label">Textarea:</label>
+              <label for="story" class="input-label">Textarea <span class="code">[name="description"]</span>:</label>
               <textarea name="description" cols="50" rows="10" id="story" class="width-all"></textarea>
             </div>
             <div class="field">
@@ -115,11 +155,11 @@
           <legend class="form-legend">Form 2</legend>
           <form name="second" id="specialForm" method="post">
             <div class="field">
-              <label for="yetAnotherName" class="input-label">Input Text:</label>
+              <label for="yetAnotherName" class="input-label">Input Text <span class="code">[name="name"]</span>:</label>
               <input type="text" name="name" value="" id="yetAnotherName"  class="width-all"/>
             </div>
             <div class="field">
-              <label for="yetAnotherTextarea" class="input-label">Textarea:</label>
+              <label for="yetAnotherTextarea" class="input-label">Textarea <span class="code">[name="description"]</span>:</label>
               <textarea name="description" cols="50" rows="10" id="yetAnotherTextarea"  class="width-all"></textarea>
             </div>
             <div class="field">
