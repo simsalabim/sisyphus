@@ -29,7 +29,8 @@
     </style>
     <script type="text/javascript">
     $(function(){
-      $('#form1, #specialForm').sisyphus();
+      //$('#form1, #form2').sisyphus();
+      $('form').sisyphus();
       
       $('select, input, textarea').uniform();
       $('#sendAll').click(function(){
@@ -76,7 +77,10 @@
           Storage to prevent your work being lost. And Sisyphus is easy to use and needs you just to 
           select forms to protect:</p>
           
-          <pre class="code">$('#form1, #specialForm').sisyphus();</pre>
+          <pre class="code">$('#form1, #form2').sisyphus();</pre>
+          
+          Or protect all forms on page (for this page these two variants are equal):
+          <pre class="code">$('form').sisyphus();</pre>
           
           <p>Local Storage will be freed of these forms values on submit or reset.
           That's it!</p>
@@ -101,7 +105,7 @@
         </div>
         <fieldset class="form-wrap">
           <legend class="form-legend">Form 1</legend>
-          <form name="mydata" id="form1" method="post">
+          <form name="mydata" id="form1" method="get">
             <div class="field">
               <label for="name" class="input-label">Input Text <span class="code">[name="name"]</span>:</label>
               <input type="text" name="name" value="" id="name" class="width-all"/>
@@ -155,7 +159,7 @@
         </fieldset>
         <fieldset class="form-wrap">
           <legend class="form-legend">Form 2</legend>
-          <form name="second" id="specialForm" method="post">
+          <form name="second" id="form2" method="get">
             <div class="field">
               <label for="yetAnotherName" class="input-label">Input Text <span class="code">[name="name"]</span>:</label>
               <input type="text" name="name" value="" id="yetAnotherName"  class="width-all"/>
