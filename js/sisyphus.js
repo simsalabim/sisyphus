@@ -1,10 +1,12 @@
 /**
- *
+ * Plugin developed to save html forms data to LocalStorage to restore them after browser crashes, tabs closings
+ * and other disasters.
  *
  * @author Alexander Kaupanin <kaupanin@gmail.com>
  */
+  
 (function($) {
-
+  
   $.fn.sisyphus = function() {
     protect(this);
   };
@@ -94,10 +96,10 @@
         var value = $(elem).val();
         if (elem.type == 'checkbox') {
           if (elem.name.indexOf('[') != -1) {
-            var value = [];
+            value = [];
             $('[name="' + elem.name + '"]:checked').each(function(){ value.push(this.value) });
           } else {
-            var value = $(elem).is(':checked');
+            value = $(elem).is(':checked');
           }
         }
         try {

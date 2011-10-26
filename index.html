@@ -29,13 +29,13 @@
     </style>
     <script type="text/javascript">
     $(function(){
-      //$('#form1, #form2').sisyphus();
-      $('form').sisyphus();
+      $('#form1, #form2').sisyphus();
+      //$('form').sisyphus(); - equivalent variant
       
       $('select, input, textarea').uniform();
       $('#sendAll').click(function(){
         $('#form1').submit();
-        $('#specialForm').submit();
+        $('#form2').submit();
       });
       $('#form1').bind('reset', function(event){
         // kludje on Uniform.js bug
