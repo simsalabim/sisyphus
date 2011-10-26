@@ -62,14 +62,17 @@
    * @return void
    */
   function restoreData(elem, resque) {
-    if (elem.name.indexOf('[') == -1) {
+    if (elem.type == 'checkbox' && resque != 'false' && elem.name.indexOf('[') == -1) {
+      elem.checked = true;
+    } else if (elem.type == 'radio') {
+      if (elem.value == resque) {
+        $(elem).attr('checked', 'checked');
+      }
+    } else if (elem.name.indexOf('[') == -1) {
       elem.value = resque; 
     } else {
       resque = resque.split(',');
       $(elem).val(resque); 
-    }
-    if (elem.type == 'checkbox' && resque != 'false' && elem.name.indexOf('[') == -1) {
-      elem.checked = true;
     }
   }
   
@@ -101,6 +104,9 @@
           } else {
             value = $(elem).is(':checked');
           }
+        }
+        if (elem.type == 'radio') {
+          value = elem.value;
         }
         try {
           localStorage.setItem(prefix, value);
