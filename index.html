@@ -5,12 +5,15 @@
     <script type="text/javascript" src="js/sisyphus.min.js" ></script>
     <script type="text/javascript" src="vendor/jquery.uniform/jquery.uniform.min.js"></script>
     <link rel="stylesheet" type="text/css" href="vendor/jquery.uniform/css/uniform.default.css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Salsa">
     <style type="text/css">
       .content{ margin: 0 auto; width: 960px;  font-family: Arial; font-size: 12px; line-height: 18px;}
       .left{ float: left;margin: 30px 0 0 40px; width: 33%;}
-       h1 { color: #000; font-size: 3.8em; margin: 50px 0 30px 0; padding: 0 0 0 30px;}
+       h1 { color: #000; font-size: 5em; margin: 50px 0 30px 0; padding: 0 0 0 360px; font-family: 'Salsa', cursive}
        h1 a {color: #000; text-decoration: none;}
-      .download { float: right; }
+       h2 { margin: 30px 0 0 0; }
+       .no-ie { width: 140px; overflow: hidden; }
+      .download { float: right; margin-top: -20px;}
       .small {font-size: 0.4em;}
       .sample{width: 60%; display: inline; float: left; padding: 0 10px;}
       .description { margin: 30px 0 0 0; }
@@ -58,8 +61,8 @@
           <img width="90" border="0" src="http://github.com/images/modules/download/tar.png"></a>
       </div>
       <h1>
-        <a href="http://github.com/simsalabim/sisyphus">Sisyphus</a>
-        <span class="small">by <a href="http://github.com/simsalabim">simsalabim</a></span>
+        <a href="http://github.com/simsalabim/sisyphus">Sisyphus.js</a>
+        <!--<span class="small">by <a href="http://github.com/simsalabim">simsalabim</a></span>-->
       </h1>
       
       <div class="left">
@@ -87,8 +90,21 @@
         </div>
         
         <h2>Dependencies</h2>
-        <p>jQuery >= 1.1</p>
-        <p>HTML5 supporting browser (tested with FF5, Chrome 14.0.835.202 m, Opera 11.11)</p>
+        <p>
+          <img src="img/jquery-logo.png" style="height:20px;"/>
+          <ul><li>jQuery 1.1+</li></ul>
+        </p>
+        
+        <h2>Browser support</h2>
+        <p>
+          <p class="no-ie"><img src="img/browsers.png" /></p>
+          <ul>
+            <li>Chrome 4+</li>
+            <li>Firefox 3.5+</li>
+            <li>Opera 10.5+</li>
+            <li>Safari 4+</li>
+          </ul>
+        </p>
         
         <h2>License</h2>
         <p>Sisyphus is released under MIT License</p>
