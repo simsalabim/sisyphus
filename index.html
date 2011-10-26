@@ -12,7 +12,10 @@
        h1 { color: #000; font-size: 5em; margin: 50px 0 30px 0; padding: 0 0 0 360px; font-family: 'Salsa', cursive}
        h1 a {color: #000; text-decoration: none;}
        h2 { margin: 30px 0 0 0; }
-       .no-ie { width: 140px; overflow: hidden; }
+      .no-ie { width: 140px; overflow: hidden; float:left; }
+      .ie { width: 50px; display:inline; }
+      .browsers { margin: 10px 0 0 0; }
+      .trollface { height: 35px; }
       .download { float: right; margin-top: -20px;}
       .small {font-size: 0.4em;}
       .sample{width: 60%; display: inline; float: left; padding: 0 10px;}
@@ -96,15 +99,17 @@
         </p>
         
         <h2>Browser support</h2>
-        <p>
-          <p class="no-ie"><img src="img/browsers.png" /></p>
+        <div class="browsers">
+          <div class="no-ie"><img src="img/browsers.png" /></div>
+          <div class="ie"><img src="img/trollface.gif" class="trollface"/></div>
           <ul>
             <li>Chrome 4+</li>
             <li>Firefox 3.5+</li>
             <li>Opera 10.5+</li>
             <li>Safari 4+</li>
+            <li>IE - <em>@todo</em></li>
           </ul>
-        </p>
+        </div>
         
         <h2>License</h2>
         <p>Sisyphus is released under MIT License</p>
