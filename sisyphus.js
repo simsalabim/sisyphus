@@ -22,7 +22,7 @@
       return false;
     }
     
-    var href = window.location.hostname + window.location.pathname;
+    var href = window.location.hostname + window.location.pathname + window.location.search;
     $(targets).each(function(){
       var target = $(this);
       var protectedFields = target.find(':input');
