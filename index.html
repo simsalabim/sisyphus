@@ -2,10 +2,10 @@
 <html>
   <head>
     <script type="text/javascript" src="vendor/jquery-1.6.4.min.js" ></script>
-    <!--<script type="text/javascript" src="js/sisyphus.min.js" ></script>-->
     <script type="text/javascript" src="https://raw.github.com/simsalabim/sisyphus/master/sisyphus.min.js"></script>
     <script type="text/javascript" src="vendor/jquery.uniform/jquery.uniform.min.js"></script>
     <link rel="stylesheet" type="text/css" href="vendor/jquery.uniform/css/uniform.default.css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="vendor/jquery.uniform/css/uniform.agent.css" media="screen" charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Salsa">
     <style type="text/css">
       .content{ margin: 0 auto; width: 960px;  font-family: Arial; font-size: 12px; line-height: 18px;}
@@ -23,17 +23,21 @@
       .sample{width: 60%; display: inline; float: left; padding: 0 10px;}
       .description { margin: 30px 0 0 0; }
       .action { text-decoration: underline; cursor: pointer; color: #4F7EEA; }
-       pre.code { background: #000000;  color: #FFFFFF; padding: 10px;  font-family: Monaco,Consolas,"Lucida Console",monospace; 
+       .code { background: #444444;  color: #FFFFFF; padding: 10px;  font-family: Monaco,Consolas,"Lucida Console",monospace; 
         margin: 10px 0;}
-       span.code { background: #E0DEDE; padding: 1px 5px; }
+       span.code { background: #E0DEDE; padding: 1px 5px; color: #444444;}
       .text { margin: 10px 0 0 0;}
       .field { margin: 10px 0 20px 0;}
+      
+      .dark { background: #444444 !important; color: #FFFFFF !important; }
+      div.checker, div.radio { float: none !important; }
+      
       .input-label { display: block; margin: 0 0 5px 0;}
       .checkbox-wrap {display: inline; margin: 0 20px 0 0;}
       .width-all {width: 100%;}
       .form-wrap {margin: 30px auto;}
       .submit-both {margin: 25px 0 0 0; text-align: center;}
-      .form-legend {color: #CC00CC; font-weight: bold;} 
+      .form-legend {color: #CC00CC; font-weight: bold;}
     </style>
     <script type="text/javascript">
     $(function(){
@@ -49,7 +53,7 @@
         // kludje on Uniform.js bug
         setTimeout(function(){
           $.uniform.update('input');
-        }, 50)
+        }, 100)
       });
     }); 
     </script>
@@ -82,17 +86,34 @@
           Disgusting, huh?</p>
 
           <p>With <strong>Sisyphus</strong> on site you just reopen page in your modern (with HTML5 support) browser
-          and see all your changes at that forms. It's lightweight <strong>(1Kb)</strong> jQuery plugin uses Local 
+          and see all your changes at that forms. It's lightweight <strong>(2Kb)</strong> jQuery plugin uses Local 
           Storage to prevent your work being lost. And Sisyphus is easy to use and needs you just to 
           select forms to protect:</p>
           
-          <pre class="code">$('#form1, #form2').sisyphus();</pre>
+          <p class="code">$('#form1, #form2').sisyphus();</p>
           
           Or protect all forms on page (for this page these two variants are equal):
-          <pre class="code">$('form').sisyphus();</pre>
+          <p class="code">$('form').sisyphus();</p>
+          <p>Local Storage will be freed of these forms values on submit or reset.</p>
           
-          <p>Local Storage will be freed of these forms values on submit or reset.
-          That's it!</p>
+          <p>Following options are dafaults but customizable:</p>
+          <pre class="code"> {
+  customKeyPrefix: '',
+  timeout: 0,
+  onSaveCallback: function() {},
+  onRestoreCallback: function() {},
+  onReleaseDataCallback: function() {}
+ }</pre>
+          
+          <p><span class="code">customKeyPrefix</span> is an addition to key in Local Storage to store form fields values</p>
+          <p><span class="code">timeout</span> is an interval in seconds to perform saving data for input:text and textarea fields (selects/checkboxes/radios are saved when changed)</p>
+          <p><span class="code">onSaveCallback</span> is function fired each time data are saved to Local Storage</p>
+          <p><span class="code">onRestoreCallback</span> is function fired if form's data are restored from Local Storage. Unlike onSaveCallback it's common for whole form, not for each field</p>
+          <p><span class="code">onReleaseDataCallback</span> is function fired when Local Storage is freed of previously stored form data</p>
+          <p>For example, following code will force Sisyphus to save each text field value every 5 seconds:</p>
+          <p class="code">$('form').sisyphus({timeout: 5});</p>
+          
+          <p>That's it!</p>
         </div>
         
         <h2>Dependencies</h2>
@@ -118,7 +139,7 @@
         <div class="todo">
           <ol>
             <li>Add IE 8+ support</li>
-            <li>Customize data saving behaviour (on typing/by timeout), add callbacks on save/restore data</li>
+            <li><strike>Customize data saving behaviour (on typing/by timeout), add callbacks on save/restore data</strike></li>
             <li>Add possibility to define custom fields to exclude from observing</li>
             <li>Adapt plugin to work on sigle-page #hash-navigation site</li>
           </ol>
@@ -142,15 +163,15 @@
           <form name="mydata" id="form1" method="get">
             <div class="field">
               <label for="name" class="input-label">Input Text <span class="code">[name="name"]</span>:</label>
-              <input type="text" name="name" value="" id="name" class="width-all"/>
+              <input type="text" name="name" value="" id="name" class="width-all dark"/>
             </div>
             <div class="field">
               <label for="story" class="input-label">Textarea <span class="code">[name="description"]</span>:</label>
-              <textarea name="description" cols="50" rows="10" id="story" class="width-all"></textarea>
+              <textarea name="description" cols="50" rows="10" id="story" class="width-all dark"></textarea>
             </div>
             <div class="field">
               <label for="country" class="input-label">Select Dropdown:</label>
-              <select name="country" id="country">
+              <select name="country" id="country" class="dark">
                 <option value="Russia">Russia</option>
                 <option value="USA">USA</option>
                 <option value="England">England</option>
@@ -158,7 +179,7 @@
             </div>
             <div class="field">
               <label for="planet" class="input-label">Select Multiple:</label>
-              <select name="planet[]" multiple size="5" id="planet" class="width-all">
+              <select name="planet[]" multiple size="5" id="planet" class="width-all dark">
                 <option value="Mercury">Mercury</option>
                 <option value="Venus">Venus</option>
                 <option value="Earth">Earth</option>
@@ -213,11 +234,11 @@
           <form name="second" id="form2" method="get">
             <div class="field">
               <label for="yetAnotherName" class="input-label">Input Text <span class="code">[name="name"]</span>:</label>
-              <input type="text" name="name" value="" id="yetAnotherName"  class="width-all"/>
+              <input type="text" name="name" value="" id="yetAnotherName"  class="width-all dark"/>
             </div>
             <div class="field">
               <label for="yetAnotherTextarea" class="input-label">Textarea <span class="code">[name="description"]</span>:</label>
-              <textarea name="description" cols="50" rows="10" id="yetAnotherTextarea"  class="width-all"></textarea>
+              <textarea name="description" cols="50" rows="10" id="yetAnotherTextarea"  class="width-all dark"></textarea>
             </div>
             <div class="field">
               <input type="submit" value="Submit" />
