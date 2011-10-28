@@ -165,17 +165,6 @@
         }
         return timeout;
       })(elem), options.timeout * 1000);
-      /*(function(elem){
-        (function timeout(){
-          try {
-            localStorage.setItem(prefix, elem.value);
-          } catch (e) {  }
-          if (typeof options.onSaveCallback == 'function') {
-            options.onSaveCallback.call();
-          }
-          setTimeout(timeout, options.timeout * 1000);
-        })();
-      })(elem);*/
     }
   }
   
