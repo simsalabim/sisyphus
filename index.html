@@ -22,14 +22,19 @@
       .download { float: right; margin-top: 20px;}
       .small {font-size: 0.4em;}
       .sample{width: 60%; display: inline; float: left; padding: 0 10px;}
+      .footer { clear: both; }
+      .cell { display: inline; }
       .description { margin: 30px 0 0 0; }
       .action { text-decoration: underline; cursor: pointer; color: #4F7EEA; }
-       .code { background: #E0DEDE;  color: #444444; padding: 10px;  font-family: Monaco,Consolas,"Lucida Console",monospace; 
+      code { background: #E0DEDE;  color: #444444; padding: 10px;  font-family: Monaco,Consolas,"Lucida Console",monospace; 
         margin: 10px 0;}
        span.code { background: #E0DEDE; padding: 1px 5px; color: #444444;}
       .text { margin: 10px 0 0 0;}
       .field { margin: 10px 0 20px 0;}
       
+      .cell h2 { display: inline; }
+      .inline { display: inline; }
+
       .dark1 { background: #444444 !important; color: #FFFFFF !important; }
       div.checker, div.radio { float: none !important; }
       
@@ -58,6 +63,16 @@
       });
     }); 
     </script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26633519-1']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
   </head>
   <body>
     <a href="http://github.com/simsalabim/sisyphus" class="fork-me">
@@ -85,7 +100,7 @@
           <p class="code">$('form').sisyphus();</p>
           <p>Local Storage will be freed of these forms values on submit or reset.</p>
           
-          <p>Following options are dafaults but customizable:</p>
+          <p>Following options are defaults but customizable:</p>
           <pre class="code"> {
   customKeyPrefix: '',
   timeout: 0,
@@ -105,43 +120,6 @@
           <p>That's it!</p>
         </div>
         
-        <h2>Dependencies</h2>
-        <p>
-          <img src="img/jquery-logo.png" style="height:20px;"/>
-          <ul><li>jQuery 1.1+</li></ul>
-        </p>
-        
-        <h2>Browser support</h2>
-        <div class="browsers">
-          <div class="no-ie"><img src="img/browsers.png" /></div>
-          <div class="ie"><img src="img/trollface.gif" class="trollface"/></div>
-          <ul>
-            <li>Chrome 4+</li>
-            <li>Firefox 3.5+</li>
-            <li>Opera 10.5+</li>
-            <li>Safari 4+</li>
-            <li>IE - <em>@todo</em></li>
-          </ul>
-        </div>
-        
-        <h2>TODO</h2>
-        <div class="todo">
-          <ol>
-            <li>Add IE 8+ support</li>
-            <li><strike>Customize data saving behaviour (on typing/by timeout), add callbacks on save/restore data</strike></li>
-            <li>Add possibility to define custom fields to exclude from observing</li>
-            <li>Adapt plugin to work on sigle-page #hash-navigation site</li>
-          </ol>
-        </div>
-        
-        <h2>License</h2>
-        <p>Sisyphus is released under MIT License</p>
-        
-        <h2>Authors</h2>
-        <p>Alexander Kaupanin &lt;kaupanin@gmail.com&gt;</p>
-        
-        <h2>Contact</h2>
-        <p>Alexander Kaupanin &lt;kaupanin@gmail.com&gt;</p>
       </div>
       <div class="sample">
         <div class="download">
@@ -251,6 +229,63 @@
         <div class="submit-both">
           <input type="button" value="Submit Both" id="sendAll" />
         </div>
+      </div>
+      
+      <div class="footer">
+        <ul class="cells">
+          <li class="cell">
+            <h2>Dependencies</h2>
+            <p>
+              <img src="img/jquery-logo.png" style="height:20px;"/>
+              <ul><li>jQuery 1.1+</li></ul>
+            </p>
+          </li>
+          <li class="cell">
+            <h2>Dependencies</h2>
+            <p>
+              <img src="img/jquery-logo.png" style="height:20px;"/>
+              <ul><li>jQuery 1.1+</li></ul>
+            </p>
+          </li>
+          
+          <li class="cell">
+            <h2>Browser support</h2>
+            <div class="browsers">
+              <div class="no-ie"><img src="img/browsers.png" /></div>
+              <div class="ie"><img src="img/trollface.gif" class="trollface"/></div>
+              <ul>
+                <li>Chrome 4+</li>
+                <li>Firefox 3.5+</li>
+                <li>Opera 10.5+</li>
+                <li>Safari 4+</li>
+                <li>IE - <em>@todo</em></li>
+              </ul>
+            </div>
+          </li>
+          
+          <li class="cell">
+            <h2>TODO</h2>
+            <div class="todo">
+              <ol>
+                <li>Add IE 8+ support</li>
+                <li><strike>Customize data saving behaviour (on typing/by timeout), add callbacks on save/restore data</strike></li>
+                <li>Add possibility to define custom fields to exclude from observing</li>
+                <li>Adapt plugin to work on sigle-page #hash-navigation site</li>
+              </ol>
+            </div>
+          </li>
+          
+          <li class="cell">
+            <h2>License</h2>
+            <p>Sisyphus is released under MIT License</p>
+            
+            <h2>Authors</h2>
+            <p>Alexander Kaupanin &lt;kaupanin@gmail.com&gt;</p>
+          
+            <h2>Contact</h2>
+            <p>Alexander Kaupanin &lt;kaupanin@gmail.com&gt;</p>
+          </li>
+        </ul>
       </div>
     </div>
   </body>
