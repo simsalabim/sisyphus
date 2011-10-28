@@ -106,7 +106,7 @@
  }</pre>
           
           <p><span class="code">customKeyPrefix</span> is an addition to key in Local Storage to store form fields values</p>
-          <p><span class="code">timeout</span> is an interval in seconds to perform saving data for input:text and textarea fields (selects/checkboxes/radios are saved when changed)</p>
+          <p><span class="code">timeout</span> is an interval in seconds to perform saving data for input:text and textarea fields (selects/checkboxes/radios are saved when changed). If 0 - save every time field is updated.</p>
           <p><span class="code">onSaveCallback</span> is function fired each time data are saved to Local Storage</p>
           <p><span class="code">onRestoreCallback</span> is function fired if form's data are restored from Local Storage. Unlike onSaveCallback it's common for whole form, not for each field</p>
           <p><span class="code">onReleaseDataCallback</span> is function fired when Local Storage is freed of previously stored form data</p>
