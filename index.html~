@@ -11,7 +11,7 @@
     <style type="text/css">
        body { background: url('img/roughcloth.png'); }
        .select { background: url('img/roughcloth.png'); }
-       input.text, textarea.uniform, input.text:focus, textarea.uniform:focus { background: none; border: 1px solid #D3D1D1; -moz-border-radius:10px;-webkit-border-radius:10px;-o-border-radius:10px;border-radius:10px;}
+       input.text, textarea.uniform, input.text:focus, textarea.uniform:focus { background: none; border: 1px solid #D3D1D1; -moz-border-radius:5px;-webkit-border-radius:5px;-o-border-radius:5px;border-radius:5px;}
        .sexy-border { border: 1px solid #D3D1D1; -moz-border-radius:10px;-webkit-border-radius:10px;-o-border-radius:10px;border-radius:10px; }
 
       .content{ margin: 0 auto; width: 960px;  font-family: Verdana; font-size: 12px; line-height: 18px; }
