@@ -9,7 +9,12 @@
     <!--<link rel="stylesheet" type="text/css" href="vendor/jquery.uniform/css/uniform.agent.css" media="screen" charset="utf-8" />-->
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Salsa">
     <style type="text/css">
-      .content{ margin: 0 auto; width: 960px;  font-family: Verdana; font-size: 12px; line-height: 18px;}
+       body { background: url('img/roughcloth.png'); }
+       .select { background: url('img/roughcloth.png'); }
+       input.text, textarea.uniform, input.text:focus, textarea.uniform:focus { background: none; border: 1px solid #D3D1D1; -moz-border-radius:5px;-webkit-border-radius:5px;-o-border-radius:5px;border-radius:5px;}
+       .sexy-border { border: 1px solid #D3D1D1; -moz-border-radius:10px;-webkit-border-radius:10px;-o-border-radius:10px;border-radius:10px; }
+
+      .content{ margin: 0 auto; width: 960px;  font-family: Verdana; font-size: 12px; line-height: 18px; }
       .left{ float: left;margin: 30px 0 0 40px; width: 33%;}
        h1 { color: #000; font-size: 5em; font-family: 'Salsa', cursive}
        h1 a {color: #000; text-decoration: none;}
@@ -21,8 +26,8 @@
       .trollface { height: 35px; }
       .download { float: right; margin-top: 20px;}
       .small {font-size: 0.4em;}
-      .sample{width: 60%; display: inline; float: left; padding: 0 10px;}
-      .footer { clear: both; position: relative; top: 50px; background: #EFEFEF; padding: 20px 10px;  }
+      .sample{width: 60%; float: left; padding: 0 10px;}
+      .footer { clear: both; position: relative; top: 50px; padding: 20px 10px; }
       
       .cell { /*float: left;*/ margin: 0 20px; min-width: 200px; display: table-cell; }
       .todo { padding: 0 0 0 20px; }
@@ -141,7 +146,7 @@
         <div class="description">
           Here you may fill forms below in arbitrary way, then close your tab/browser, <span onclick="window.location.reload()" class="action">refresh window</span> or open this page in a <a href="http://simsalabim.github.com/sisyphus/" class="action" target="_blank">new tab</a> to see all your changes are saved and restored.
         </div>
-        <fieldset class="form-wrap">
+        <fieldset class="form-wrap sexy-border">
           <legend class="form-legend">Form 1</legend>
           <form name="mydata" id="form1" method="get">
             <div class="field">
@@ -162,7 +167,7 @@
             </div>
             <div class="field">
               <label for="planet" class="input-label">Select Multiple:</label>
-              <select name="planet[]" multiple size="5" id="planet" class="width-all dark">
+              <select name="planet[]" multiple size="5" id="planet" class="width-all dark select sexy-border">
                 <option value="Mercury">Mercury</option>
                 <option value="Venus">Venus</option>
                 <option value="Earth">Earth</option>
@@ -173,7 +178,7 @@
               <input type="checkbox" name="single" value="1" id="single" />
             </div>
             <div class="field">
-              <fieldset class="checkbox-group">
+              <fieldset class="checkbox-group sexy-border">
                 <legend>Checkbox Group:</legend>
                 <div class="checkbox-wrap">
                   <input type="checkbox" name="fruit[]" value="Pineapple" id="pineapple" /> 
@@ -190,7 +195,7 @@
               </fieldset>
             </div>
             <div class="field">
-              <fieldset class="checkbox-group">
+              <fieldset class="checkbox-group sexy-border">
                 <legend>Radio Buttons:</legend>
                 <div class="checkbox-wrap">
                   <input type="radio" name="color" value="Red" id="red" /> 
@@ -212,7 +217,7 @@
             </div>
           </form>
         </fieldset>
-        <fieldset class="form-wrap">
+        <fieldset class="form-wrap sexy-border">
           <legend class="form-legend">Form 2</legend>
           <form name="second" id="form2" method="get">
             <div class="field">
@@ -234,7 +239,7 @@
         </div>
       </div>
       
-      <div class="footer">
+      <div class="footer sexy-border">
 
           <div class="cell">
             <h2>Dependencies</h2>
