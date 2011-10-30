@@ -22,8 +22,11 @@
       .download { float: right; margin-top: 20px;}
       .small {font-size: 0.4em;}
       .sample{width: 60%; display: inline; float: left; padding: 0 10px;}
-      .footer { clear: both; }
-      .cell { display: inline; }
+      .footer { clear: both; position: relative; top: 50px; background: #EFEFEF; padding: 20px 10px;  }
+      
+      .cell { /*float: left;*/ margin: 0 20px; min-width: 200px; display: table-cell; }
+      .todo { padding: 0 0 0 20px; }
+
       .description { margin: 30px 0 0 0; }
       .action { text-decoration: underline; cursor: pointer; color: #4F7EEA; }
       .code { background: #E0DEDE;  color: #444444; padding: 10px;  font-family: Monaco,Consolas,"Lucida Console",monospace; 
@@ -232,15 +235,16 @@
       </div>
       
       <div class="footer">
-        <ul class="cells">
-          <li class="cell">
+
+          <div class="cell">
             <h2>Dependencies</h2>
             <p>
               <img src="img/jquery-logo.png" style="height:20px;"/>
               <ul><li>jQuery 1.1+</li></ul>
             </p>
-          </li>          
-          <li class="cell">
+          </div>
+          
+          <div class="cell">
             <h2>Browser support</h2>
             <div class="browsers">
               <div class="no-ie"><img src="img/browsers.png" /></div>
@@ -253,21 +257,21 @@
                 <li>IE - <em>@todo</em></li>
               </ul>
             </div>
-          </li>
+          </div>
           
-          <li class="cell">
+          <div class="cell">
             <h2>TODO</h2>
-            <div class="todo">
-              <ol>
+            <div>
+              <ol class="todo">
                 <li>Add IE 8+ support</li>
                 <li><strike>Customize data saving behaviour (on typing/by timeout), add callbacks on save/restore data</strike></li>
                 <li>Add possibility to define custom fields to exclude from observing</li>
                 <li>Adapt plugin to work on sigle-page #hash-navigation site</li>
               </ol>
             </div>
-          </li>
+          </div>
           
-          <li class="cell">
+          <div class="cell">
             <h2>License</h2>
             <p>Sisyphus is released under MIT License</p>
             
@@ -276,8 +280,8 @@
           
             <h2>Contact</h2>
             <p>Alexander Kaupanin &lt;kaupanin@gmail.com&gt;</p>
-          </li>
-        </ul>
+          </div>
+
       </div>
     </div>
   </body>
