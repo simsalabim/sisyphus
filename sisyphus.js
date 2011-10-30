@@ -33,7 +33,6 @@
     if (! isLocalStorageAvailable()) {
       return false;
     }
-    console.log(options);
 
     var href = window.location.hostname + window.location.pathname + window.location.search;
     $(targets).each(function(){
