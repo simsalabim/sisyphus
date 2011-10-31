@@ -2,6 +2,8 @@
 <html>
   <head>
     <script type="text/javascript" src="vendor/jquery-1.6.4.min.js" ></script>
+    <script type="text/javascript" src="vendor/jquery.jnotify/jquery.jnotify.min.js" ></script>
+    <link rel="stylesheet" type="text/css" href="vendor/jquery.jnotify/jquery.jnotify.min.css" media="screen" charset="utf-8" />
     <!--<script type="text/javascript" src="js/sisyphus.js" ></script>-->
     <script type="text/javascript" src="https://raw.github.com/simsalabim/sisyphus/master/sisyphus.min.js"></script>
     <script type="text/javascript" src="vendor/jquery.uniform/jquery.uniform.min.js"></script>
@@ -13,6 +15,7 @@
        .select { background: url('img/stucco.png'); }
        input.text, textarea.uniform, input.text:focus, textarea.uniform:focus { background: none; border: 1px solid #D3D1D1; -moz-border-radius:5px;-webkit-border-radius:5px;-o-border-radius:5px;border-radius:5px;}
        .sexy-border { border: 1px solid #D3D1D1; -moz-border-radius:10px;-webkit-border-radius:10px;-o-border-radius:10px;border-radius:10px; }
+       img { border: 0 none; }
 
       .content{ margin: 0 auto; width: 960px;  font-family: Verdana; font-size: 12px; line-height: 18px; }
       .left{ float: left;margin: 30px 0 0 40px; width: 33%;}
@@ -20,9 +23,9 @@
        h1 a {color: #000; text-decoration: none;}
        h3 { font-family: 'Salsa', cursive; font-size: 1.4em; font-weight: normal;}
        h2 { margin: 30px 0 0 0; }
-      .no-ie { width: 140px; overflow: hidden; float:left; }
+      .no-ie { }
       .ie { width: 50px; display:inline; }
-      .browsers { margin: 10px 0 0 0; }
+      .browsers { margin: 10px 0 0 0;  }
       .trollface { height: 35px; }
       .download { float: right; margin-top: 20px;}
       .small {font-size: 0.4em;}
@@ -55,7 +58,11 @@
     </style>
     <script type="text/javascript">
     $(function(){
-      $('#form1, #form2').sisyphus();
+      $('#form1, #form2').sisyphus({
+        onSaveCallback: function() {$.jnotify('Data are saved to Local Storage', 2000);},
+        onRestoreCallback: function() {$.jnotify('Data are restored from Local Storage', 2000);},
+        onReleaseDataCallback: function() {$.jnotify('Data are released from Local Storage', 2000);}
+      });
       //$('form').sisyphus(); - equivalent variant
       
       $('select, input, textarea').uniform();
@@ -243,17 +250,16 @@
 
           <div class="cell">
             <h2>Dependencies</h2>
-            <p>
+            <div>
               <img src="img/jquery-logo.png" style="height:20px;"/>
               <ul><li>jQuery 1.1+</li></ul>
-            </p>
+            </div>
           </div>
           
           <div class="cell">
             <h2>Browser support</h2>
             <div class="browsers">
               <div class="no-ie"><img src="img/browsers.png" /></div>
-              <div class="ie"><img src="img/trollface.gif" class="trollface"/></div>
               <ul>
                 <li>Chrome 4+</li>
                 <li>Firefox 3.5+</li>
@@ -268,7 +274,7 @@
             <h2>TODO</h2>
             <div>
               <ol class="todo">
-                <li>Add IE 8+ support</li>
+                <li><strike>Add IE 8+ support</strike></li>
                 <li><strike>Customize data saving behaviour (on typing/by timeout), add callbacks on save/restore data</strike></li>
                 <li>Add possibility to define custom fields to exclude from observing</li>
                 <li>Adapt plugin to work on sigle-page #hash-navigation site</li>
