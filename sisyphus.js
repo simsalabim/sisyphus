@@ -10,6 +10,7 @@
   $.fn.sisyphus = function(options) {
     options = $.extend($.fn.sisyphus.defaults, options);
     protect(this, options);
+    $.fn.sisyphus.action = null;
   };
   
   $.fn.sisyphus.defaults = {
@@ -131,9 +132,9 @@
     if (typeof $.browser.msie != 'undefined' && $.browser.msie) {
       elem.onpropertychange = function() {
         try {
-          localStorage.setItem(prefix, elem.value + "");
+          localStorage.setItem(prefix, elem.value + '');
         } catch (e) { /*QUOTA_EXCEEDED_ERR*/ }
-        if (typeof options.onSaveCallback == 'function') {
+        if (elem.value != '' && typeof options.onSaveCallback == 'function') {
           options.onSaveCallback.call();
         }
       }
