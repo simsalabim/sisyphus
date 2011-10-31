@@ -127,13 +127,24 @@
    *
    * @return void
    */
-  function bindSaveDataImmediately(elem, prefix, options) {
-    elem.oninput = function() {
-      try {
-        localStorage.setItem(prefix, elem.value);
-      } catch (e) { /*QUOTA_EXCEEDED_ERR*/ }
-      if (typeof options.onSaveCallback == 'function') {
-        options.onSaveCallback.call();
+  function bindSaveDataImmediately(elem, prefix, options, init) {
+    if (typeof $.browser.msie != 'undefined' && $.browser.msie) {
+      elem.onpropertychange = function() {
+        try {
+          localStorage.setItem(prefix, elem.value + "");
+        } catch (e) { /*QUOTA_EXCEEDED_ERR*/ }
+        if (typeof options.onSaveCallback == 'function') {
+          options.onSaveCallback.call();
+        }
+      }
+    } else {
+      elem.oninput = function() {
+        try {
+          localStorage.setItem(prefix, elem.value);
+        } catch (e) { /*QUOTA_EXCEEDED_ERR*/ }
+        if (typeof options.onSaveCallback == 'function') {
+          options.onSaveCallback.call();
+        }
       }
     }
   }
