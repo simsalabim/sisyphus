@@ -1,4 +1,4 @@
-<! DOCTYPE html >
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
 <html>
   <head>
     <script type="text/javascript" src="vendor/jquery-1.6.4.min.js" ></script>
@@ -11,13 +11,13 @@
     <!--<link rel="stylesheet" type="text/css" href="vendor/jquery.uniform/css/uniform.agent.css" media="screen" charset="utf-8" />-->
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Salsa">
     <style type="text/css">
-       body { background: url('img/stucco.png'); }
-       .select { background: url('img/stucco.png'); }
+       body { background: url('img/stucco.png'); text-align: center }
+      .select { background: url('img/stucco.png'); }
        input.text, textarea.uniform, input.text:focus, textarea.uniform:focus { background: none; border: 1px solid #D3D1D1; -moz-border-radius:5px;-webkit-border-radius:5px;-o-border-radius:5px;border-radius:5px;}
-       .sexy-border { border: 1px solid #D3D1D1; -moz-border-radius:10px;-webkit-border-radius:10px;-o-border-radius:10px;border-radius:10px; }
+      .sexy-border { border: 1px solid #D3D1D1; -moz-border-radius:5px;-webkit-border-radius:5px;-o-border-radius:5px;border-radius:5px; }
        img { border: 0 none; }
 
-      .content{ margin: 0 auto; width: 960px;  font-family: Verdana; font-size: 12px; line-height: 18px; }
+      .content{ margin: 0 auto; width: 960px;  font-family: Verdana; font-size: 12px; line-height: 18px; text-align: left;}
       .left{ float: left;margin: 30px 0 0 40px; width: 33%;}
        h1 { color: #000; font-size: 5em; font-family: 'Salsa', cursive}
        h1 a {color: #000; text-decoration: none;}
@@ -61,7 +61,7 @@
       $('#form1, #form2').sisyphus({
         onSaveCallback: function() {$.jnotify('Data are saved to Local Storage', 2000);},
         onRestoreCallback: function() {$.jnotify('Data are restored from Local Storage', 2000);},
-        onReleaseDataCallback: function() {$.jnotify('Data are released from Local Storage', 2000);}
+        onReleaseDataCallback: function() {$.jnotify('Data are released from Local Storage', 'warning', 2000);}
       });
       //$('form').sisyphus(); - equivalent variant
       
