@@ -5,12 +5,12 @@
  * @author Alexander Kaupanin <kaupanin@gmail.com>
  */
 	
-(function($, window) {
+(function( $, window ) {
 	
-	$.fn.sisyphus = function(options) {
-		options = $.extend($.fn.sisyphus.defaults, options);
-		protect(this, options);
-		$.fn.sisyphus.action = null;
+	$.fn.sisyphus = function( options ) {
+		options = $.extend( $.fn.sisyphus.defaults, options );
+		$.fn.sisyphus.options = $.extend( $.fn.sisyphus.defaults, options );
+		protect( this, options );
 	};
 	
 	$.fn.sisyphus.defaults = {
@@ -30,18 +30,18 @@
 	 *
 	 * @return void
 	 */
-	function protect(targets, options) {
+	function protect( targets, options ) {
 		if (! isLocalStorageAvailable()) {
 			return false;
 		}
 
 		var href = location.hostname + location.pathname + location.search;
-		$(targets).each(function() {
-			var target = $(this);
-			var protectedFields = target.find(":input");
-			bindSaveAndRestoreData(protectedFields, target, href, options);
-			bindReleaseDataOnSubmitOrReset(protectedFields, target, href, options);
-		});
+		$( targets ).each( function() {
+			var target = $( this );
+			var protectedFields = target.find( ":input" );
+			bindSaveAndRestoreData( protectedFields, target, href, options );
+			bindReleaseDataOnSubmitOrReset( protectedFields, target, href, options );
+		} );
 	}
 	
 	
@@ -55,19 +55,34 @@
 	 *
 	 * @return void
 	 */
-	function bindSaveAndRestoreData(protectedFields, target, href, options) {
+	function bindSaveAndRestoreData( protectedFields, target, href, options ) {
 		var restored = false;
-		protectedFields.each(function() {
+		protectedFields.each( function() {
 			field = $(this);
-			var prefix = href + target[0].id + field.attr("name") + options.customKeyPrefix;
-			var resque = localStorage.getItem(prefix);
+			if ( field.is( ":button" ) || field.is( ":submit" ) ) {
+				return;
+			}
+			var prefix = href + target[0].id + field.attr( "name" ) + options.customKeyPrefix;
+			var resque = localStorage.getItem( prefix );
 			if (resque) {
-				restoreData(field, resque, options);
+				restoreData( field, resque, options );
 				restored = true;
 			}
-			bindSaveData(field, prefix, options);
-		});
-		if (restored && $.isFunction(options.onRestoreCallback)) {
+			if ( field.is( ":text" ) || field.is( "textarea" ) ) {
+				if ( !options.timeout ) {
+					bindSaveDataImmediately( field, prefix, options );
+				}
+			} else {
+				bindSaveDataOnChange( field, prefix, options );
+			}
+			//bindSaveData( field, prefix, options );
+		} );
+		
+		if ( options.timeout ) {
+			bindSaveDataByTimeout( protectedFields, href, options );
+		}
+		
+		if ( restored && $.isFunction(options.onRestoreCallback) ) {
 			options.onRestoreCallback.call();
 		}
 	}
@@ -82,18 +97,18 @@
 	 *
 	 * @return void
 	 */
-	function restoreData(elem, resque, options) {
-		if (elem.is(":checkbox") && resque !== "false" && elem.attr("name").indexOf("[") === -1) {
-			elem.attr("checked", "checked");
-		} else if (elem.is(":radio")) {
+	function restoreData( elem, resque, options ) {
+		if ( elem.is(":checkbox") && resque !== "false" && elem.attr("name").indexOf("[") === -1 ) {
+			elem.attr( "checked", "checked" );
+		} else if ( elem.is(":radio") ) {
 			if (elem.val() === resque) {
-				$(elem).attr("checked", "checked");
+				elem.attr("checked", "checked");
 			}
-		} else if (elem.attr("name").indexOf("[") === -1) {
-			elem.val(resque); 
+		} else if ( elem.attr( "name" ).indexOf( "[" ) === -1 ) {
+			elem.val( resque ); 
 		} else {
-			resque = resque.split(",");
-			$(elem).val(resque); 
+			resque = resque.split( "," );
+			elem.val( resque ); 
 		}
 	}
 	
@@ -107,17 +122,17 @@
 	 *
 	 * @return void
 	 */
-	function bindSaveData(elem, prefix, options) {
-		if (elem.is(":text") || elem.is("textarea")) {
-			if (! options.timeout) {
-				bindSaveDataImmediately(elem, prefix, options);
+	/*function bindSaveData( elem, prefix, options ) {
+		if ( elem.is( ":text" ) || elem.is( "textarea" ) ) {
+			if ( !options.timeout ) {
+				bindSaveDataImmediately( elem, prefix, options );
 			} else {
-				bindSaveDataByTimeout(elem, prefix, options);
+				bindSaveDataByTimeout( elem, prefix, options );
 			}
 		} else {
-			bindSaveDataOnChange(elem, prefix, options);
+			bindSaveDataOnChange( elem, prefix, options );
 		}
-	}
+	}*/
 	
 	
 	/**
@@ -129,26 +144,26 @@
 	 *
 	 * @return void
 	 */
-	function bindSaveDataImmediately(elem, prefix, options) {
-		if ($.browser.msie == null) {
+	function bindSaveDataImmediately( elem, prefix, options ) {
+		if ( $.browser.msie == null ) {
 			elem.get(0).oninput = function() {
 				try {
-					localStorage.setItem(prefix, elem.val());
+					localStorage.setItem( prefix, elem.val() );
 				} catch (e) { 
 					//QUOTA_EXCEEDED_ERR
 				}
-				if ($.isFunction(options.onSaveCallback)) {
+				if ( $.isFunction( options.onSaveCallback ) ) {
 					options.onSaveCallback.call();
 				}
 			}
 		} else {
 			elem.get(0).onpropertychange = function() {
 				try {
-					localStorage.setItem(prefix, elem.val() + "");
+					localStorage.setItem( prefix, elem.val() + "" );
 				} catch (e) { 
 					//QUOTA_EXCEEDED_ERR
 				}
-				if (elem.val() != "" && $.isFunction(options.onSaveCallback)) {
+				if ( elem.val() != "" && $.isFunction( options.onSaveCallback ) ) {
 					options.onSaveCallback.call();
 				}
 			}
@@ -159,25 +174,33 @@
 	/**
 	 * Bind saving (by timeout) field data to local storage when user fills it
 	 *
-	 * @param Object elem		jQuery form element object
-	 * @param String prefix	prefix used as key to store data in local storage
-	 * @param Object options	plugin options
+	 * @param Object protectedFields	jQuery form elements tuple
+	 * @param String href				href
+	 * @param Object options			plugin options
 	 *
 	 * @return void
 	 */
-	function bindSaveDataByTimeout(elem, prefix, options) {
-		setTimeout((function(elem) {
+	function bindSaveDataByTimeout( protectedFields, href, options ) {
+		setTimeout( (function( protectedFields ) {
 			function timeout() {
-				try {
-					localStorage.setItem(prefix, elem.val());
-				} catch (e) {	}
-				if ($.isFunction(options.onSaveCallback)) {
+				protectedFields.each( function() {
+					var elem = $( this );
+					if ( elem.is( ":text" ) || elem.is( "textarea" ) ) {
+						var prefix = href + elem.parents( "form" ).attr( "id" ) + field.attr( "name" ) + options.customKeyPrefix;
+						try {
+							localStorage.setItem( prefix, elem.val() );
+						} catch (e) {
+							//QUOTA_EXCEEDED_ERR
+						}
+					}
+				} );
+				if ( $.isFunction(options.onSaveCallback) ) {
 					options.onSaveCallback.call();
 				}
-				setTimeout(timeout, options.timeout * 1000);
+				setTimeout( timeout, options.timeout * 1000 );
 			}
 			return timeout;
-		})(elem), options.timeout * 1000);
+		})(protectedFields), options.timeout * 1000 );
 	}
 	
 	
@@ -190,31 +213,31 @@
 	 *
 	 * @return void
 	 */
-	function bindSaveDataOnChange(elem, prefix, options) {
-		elem.change(function() {
+	function bindSaveDataOnChange( elem, prefix, options ) {
+		elem.change( function() {
 			var value = elem.val();
-			if (elem.is(":checkbox")) {
-				if (elem.attr("name").indexOf("[") != -1) {
+			if ( elem.is(":checkbox") ) {
+				if ( elem.attr( "name" ).indexOf( "[" ) != -1 ) {
 					value = [];
-					$("[name='" + elem.attr("name") +"']:checked").each(function() {
-						value.push($(this).val()) 
-					});
+					$( "[name='" + elem.attr( "name" ) +"']:checked" ).each( function() {
+						value.push( $(this).val() );
+					} );
 				} else {
-					value = elem.is(":checked");
+					value = elem.is( ":checked" );
 				}
 			}
-			if (elem.is(":radio")) {
+			if ( elem.is( ":radio" ) ) {
 				value = elem.val();
 			}
 			try {
-				localStorage.setItem(prefix, value);
+				localStorage.setItem( prefix, value );
 			} catch (e) { 
 				//QUOTA_EXCEEDED_ERR
 			}
-			if ($.isFunction(options.onSaveCallback)) {
+			if ( $.isFunction( options.onSaveCallback ) ) {
 				options.onSaveCallback.call();
 			}
-		});
+		} );
 	}
 	
 	
@@ -228,10 +251,10 @@
 	 *
 	 * @return void
 	 */
-	function bindReleaseDataOnSubmitOrReset(protectedFields, target, href, options) {
-		target.bind("submit reset", function() {
+	function bindReleaseDataOnSubmitOrReset( protectedFields, target, href, options ) {
+		target.bind( "submit reset", function() {
 			releaseData( protectedFields, target, href, options );
-		});
+		} );
 	}
 	
 	
@@ -245,14 +268,14 @@
 	 *
 	 * @return void
 	 */
-	function releaseData(protectedFields, target, href, options) {
+	function releaseData( protectedFields, target, href, options ) {
 		var released = false;
-		protectedFields.each(function() {
+		protectedFields.each( function() {
 			var prefix = href + target[0].id + this.name;
-			localStorage.removeItem(prefix);
+			localStorage.removeItem( prefix );
 			released = true;
-		});
-		if (released && $.isFunction(options.onReleaseDataCallback)) {
+		} );
+		if ( released && $.isFunction( options.onReleaseDataCallback ) ) {
 			options.onReleaseDataCallback.call();
 		}
 	}
@@ -271,4 +294,4 @@
 		}
 	}
 	
-})(jQuery, window);
+})( jQuery, window );
