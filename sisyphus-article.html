@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Salsa" />
+    <style type="text/css">
+       body { text-align: center }
+       img { border: 0 none; }
+
+      .content{ margin: 0 auto; width: 960px;  font-family: Verdana; font-size: 12px; line-height: 18px; text-align: left; padding-bottom:30px;}
+       h1 { color: #000; font-size: 5em; font-family: 'Salsa', cursive}
+       h1 a {color: #000; text-decoration: none;}
+       h3 { font-family: 'Salsa', cursive; font-size: 1.4em; font-weight: normal;}
+       .text h3 { font-family: Verdana; font-size: 1.4em; font-weight: normal; margin-top: 30px;}
+       h2 { margin: 30px 0 0 0; }
+      .small {font-size: 0.4em;}
+      .item {margin:10px 0 0 0;}
+      
+      .action { text-decoration: underline; cursor: pointer; color: #4F7EEA; }
+      .code { background: #E0DEDE;  color: #444444; padding: 10px;  font-family: Monaco,Consolas,"Lucida Console",monospace; 
+        margin: 10px 0;}
+       span.code { background: #E0DEDE; padding: 1px 5px; color: #444444;}
+      .text { margin: 50px 0 0 0;}
+    </style>
+  </head>
+  <body>
+    <div class="content">
+        <h1>
+          <a href="http://github.com/simsalabim/sisyphus">Sisyphus.js</a>
+        </h1>
+        <h3>Gmail-like client-side drafts and bit more</h3>
+        
+        <div class="text">
+          
+          <h2>What's the problem?</h2>
+          <p>Did you ever have times when during the long tedious form filling or writing an eloquent and passionate commentary your browser was suddenly crashed? Or you closed active tab mistakenly, or Internet connection was lost, or electricity was turned off (and you've no UPS, by well-known law)? If not - then you are lucky, but no one is protected of such incidents.</p>
+          
+          <p>Imagine a storm of emotions felt by the user, just lost all the input data - and in fact he had to add little bit and submit the form. Disgusting, huh? Now, if only there was a way to recover the data, rather than engage in a Sisyphean problem...</p>
+          
+          <h3>Users custom rake-style solutions</h3>
+          <p>This is true, by the way, even to writing posts on forum. Fairly common practice is to set a long piece of text in files with the periodic preservation and subsequent copy-paste to the web resource. Another variant is to copy-paste just typed text right before form submit. You can save drafts on a regular basis, but not all forums provide such opportunity, and it's not too convenient to do. Best at this are Gmail's drafts with autosave - you just type, all the information is stored and you even don't need to press any button.</p>
+          
+          <p>Besides (I was told about that after released Sisyphus), there's Firefox and Chrome extension Lazarus, that helps to recover forms data. But browser extension causes bigger problem - distribution. Some users don't even have an idea of what browser extension is, and since their percentage is high, such solution doesn't make sense to mass user. People able to influence users directly - are web developers, so it seems more humanely to take care of user input while developing site, rather than force them to build skyscraper of extensions.
+          </p>
+          
+          <h2>A Solution: Sisyphus</h2>
+          <p>Implement autosaving drafts like Google's - a more complex task and not a generic method. I wanted the solution was simple and fit for reuse, which in this case excludes the server-side magic.</p>
+          
+          <p>The result was written unpretentious script that can store data entered in the form to Local Storage of your browser and restore  this form by this data on reload/reopen/open-in-separate-tab this page. Local Storage will be freed of forms data on submit or reset.</p>
+          
+          
+          <h2>How to use?</h2>
+          <p>Usage is pretty simple: you should just select forms to protect:</p>
+          <p class="code">$('#form1, #form2').sisyphus();</p>
+          
+          Or protect all forms on page:
+          <p class="code">$('form').sisyphus();</p>
+          
+          <p>Following options are defaults but customizable:</p>
+          <pre class="code"> {
+  customKeyPrefix: '',
+  timeout: 0,
+  onSaveCallback: function() {},
+  onRestoreCallback: function() {},
+  onReleaseDataCallback: function() {}
+ }</pre>
+          
+          <p><span class="code">customKeyPrefix</span> is an addition to key in Local Storage to store form fields values.</p>
+          <p><span class="code">timeout</span> is an interval in seconds to perform saving data for input:text and textarea fields (selects/checkboxes/radios are saved when changed). If 0 - save every time field is updated.</p>
+          <p><span class="code">onSaveCallback</span> is function fired each time data are saved to Local Storage.</p>
+          <p><span class="code">onRestoreCallback</span> is function fired if form's data are restored from Local Storage. Unlike onSaveCallback it's common for whole form, not for each field.</p>
+          <p><span class="code">onReleaseDataCallback</span> is function fired when Local Storage is freed of previously stored form data.</p>
+          
+          <br />
+          <p>For example, following code will force Sisyphus to save each text field value every 5 seconds:</p>
+          <p class="code">$('form').sisyphus({timeout: 5});</p>
+          
+          
+          <h2>Dependencies</h2>
+          <p>Sisyphus requires jQuery v1.1 or higher</p>
+          
+          <h2>Browser support</h2>
+          <img src="http://simsalabim.github.com/sisyphus/img/browsers.png" class="item"/>
+            <ul>
+              <li>Chrome 4+</li>
+              <li>Firefox 3.5+</li>
+              <li>Opera 10.5+</li>
+              <li>Safari 4+</li>
+              <li>IE 8+</li>
+            </ul>
+            Is also works on Android 2.2 browsers (both on default and Dolphin HD), other mobile platforms weren't tested.
+          
+          <h2>Download Script</h2>
+          <p><a href="http://simsalabim.github.com/sisyphus/">Sisyphus</a> is hosted on GitHub, minified version is about 2 KB. <a href="https://github.com/simsalabim/sisyphus/issues?labels=feature">Roadmap</a> and <a href="https://github.com/simsalabim/sisyphus/issues?labels=">issue tracker</a> are also available.
+          </p>
+          
+        </div>
+      </div>
+  </body>
+</html>
