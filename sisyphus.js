@@ -114,28 +114,6 @@
 	
 	
 	/**
-	 * Bind saving field data to local storage when user fills it
-	 *
-	 * @param Object elem		jQuery form element object
-	 * @param String prefix	prefix used as key to store data in local storage
-	 * @param Object options	plugin options
-	 *
-	 * @return void
-	 */
-	/*function bindSaveData( elem, prefix, options ) {
-		if ( elem.is( ":text" ) || elem.is( "textarea" ) ) {
-			if ( !options.timeout ) {
-				bindSaveDataImmediately( elem, prefix, options );
-			} else {
-				bindSaveDataByTimeout( elem, prefix, options );
-			}
-		} else {
-			bindSaveDataOnChange( elem, prefix, options );
-		}
-	}*/
-	
-	
-	/**
 	 * Bind immediate saving (on typing/checking/changing) field data to local storage when user fills it
 	 *
 	 * @param Object elem		jQuery form element object
