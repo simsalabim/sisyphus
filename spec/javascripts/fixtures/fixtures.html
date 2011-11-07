@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+<html>
+  <head>
+    <style type="text/css">
+       body { background: url('img/stucco.png'); text-align: center }
+      .select { background: url('img/stucco.png'); }
+       input.text, textarea.uniform, input.text:focus, textarea.uniform:focus { background: none; border: 1px solid #D3D1D1; -moz-border-radius:5px;-webkit-border-radius:5px;-o-border-radius:5px;border-radius:5px;}
+      .sexy-border { border: 1px solid #D3D1D1; -moz-border-radius:5px;-webkit-border-radius:5px;-o-border-radius:5px;border-radius:5px; }
+       img { border: 0 none; }
+
+      .content{ margin: 0 auto; width: 960px;  font-family: Verdana; font-size: 12px; line-height: 18px; text-align: left;}
+      .left{ float: left;margin: 30px 0 0 0; width: 33%;}
+       h1 { color: #000; font-size: 5em; font-family: 'Salsa', cursive}
+       h1 a {color: #000; text-decoration: none;}
+       h3 { font-family: 'Salsa', cursive; font-size: 1.4em; font-weight: normal;}
+       h2 { margin: 30px 0 0 0; }
+      .no-ie { }
+      .ie { width: 50px; display:inline; }
+      .todo-item { margin: 10px 0 0 0; }
+      .trollface { height: 35px; }
+      .download { float: right; margin-top: 20px;}
+      .small {font-size: 0.4em;}
+      .sample{width: 64%; float: left; padding: 0 10px;}
+      .footer { clear: both; position: relative; top: 50px; padding: 20px 10px; }
+      
+      .cell { /*float: left;*/ margin: 0 20px; min-width: 200px; display: table-cell; }
+      .todo { padding: 0 0 0 20px; }
+
+      .description { margin: 30px 0 0 0; }
+      .action { text-decoration: underline; cursor: pointer; color: #4F7EEA; }
+      .code { background: #E0DEDE;  color: #444444; padding: 10px;  font-family: Monaco,Consolas,"Lucida Console",monospace; 
+        margin: 10px 0;}
+       span.code { background: #E0DEDE; padding: 1px 5px; color: #444444;}
+      .text { margin: 10px 0 0 0;}
+      .field { margin: 10px 0 20px 0;}
+      
+      .cell h2 { display: inline; }
+      .inline { display: inline; }
+
+      .dark1 { background: #444444 !important; color: #FFFFFF !important; }
+      div.checker, div.radio { float: none !important; }
+      
+      .input-label { display: block; margin: 0 0 5px 0;}
+      .checkbox-wrap {display: inline; margin: 0 20px 0 0;}
+      .width-all {width: 99%;}
+      .form-wrap {margin: 30px auto; text-align: left; padding: 15px; }
+      .submit-both {margin: 25px 0 0 0; text-align: center;}
+      .form-legend {color: #CC00CC; font-weight: bold;}
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <div class="sample">
+        <fieldset class="form-wrap sexy-border">
+          <legend class="form-legend">Form 1</legend>
+          <form name="mydata" id="form1" method="get">
+            <div class="field">
+              <label for="name" class="input-label">Input Text <span class="code">[name="name"]</span>:</label>
+              <input type="text" name="name" value="" id="name" class="width-all dark"/>
+            </div>
+            <div class="field">
+              <label for="story" class="input-label">Textarea <span class="code">[name="description"]</span>:</label>
+              <textarea name="description" cols="50" rows="10" id="story" class="width-all dark"></textarea>
+            </div>
+            <div class="field">
+              <label for="country" class="input-label">Select Dropdown:</label>
+              <select name="country" id="country" class="dark">
+                <option value="Russia">Russia</option>
+                <option value="USA">USA</option>
+                <option value="England">England</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="planet" class="input-label">Select Multiple:</label>
+              <select name="planet[]" multiple size="5" id="planet" class="width-all dark select sexy-border">
+                <option value="Mercury">Mercury</option>
+                <option value="Venus">Venus</option>
+                <option value="Earth">Earth</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="single">Checkbox:</label>
+              <input type="checkbox" name="single" value="1" id="single" />
+            </div>
+            <div class="field">
+              <fieldset class="checkbox-group sexy-border">
+                <legend>Checkbox Group:</legend>
+                <div class="checkbox-wrap">
+                  <input type="checkbox" name="fruit[]" value="Pineapple" id="pineapple" /> 
+                  <label for="pineapple">Pineapple</label>
+                </div>
+                <div class="checkbox-wrap">
+                  <input type="checkbox" name="fruit[]" value="Orange" id="orange" /> 
+                  <label for="orange">Orange</label>
+                </div>
+                <div class="checkbox-wrap">
+                  <input type="checkbox" name="fruit[]" value="Peach" id="peach" /> 
+                  <label for="peach">Peach</label>
+                </div>
+              </fieldset>
+            </div>
+            <div class="field">
+              <fieldset class="checkbox-group sexy-border">
+                <legend>Radio Buttons:</legend>
+                <div class="checkbox-wrap">
+                  <input type="radio" name="color" value="Red" id="red" /> 
+                  <label for="red">Red</label>
+                </div>
+                <div class="checkbox-wrap">
+                  <input type="radio" name="color" value="Green" id="green" /> 
+                  <label for="green">Green</label>
+                </div>
+                <div class="checkbox-wrap">
+                  <input type="radio" name="color" value="Blue" id="blue" /> 
+                  <label for="blue">Blue</label>
+                </div>
+              </fieldset>
+            </div>
+            <div class="field">
+              <input type="submit" value="Submit" />
+              <input type="reset" value="Reset" name="reset"/>
+            </div>
+          </form>
+        </fieldset>
+        <fieldset class="form-wrap sexy-border">
+          <legend class="form-legend">Form 2</legend>
+          <form name="second" id="form2" method="get">
+            <div class="field">
+              <label for="yetAnotherName" class="input-label">Input Text <span class="code">[name="name"]</span>:</label>
+              <input type="text" name="name" value="" id="yetAnotherName"  class="width-all dark"/>
+            </div>
+            <div class="field">
+              <label for="yetAnotherTextarea" class="input-label">Textarea <span class="code">[name="description"]</span>:</label>
+              <textarea name="description" cols="50" rows="10" id="yetAnotherTextarea"  class="width-all dark"></textarea>
+            </div>
+            <div class="field">
+              <input type="submit" value="Submit" />
+              <input type="reset" value="Reset" />
+            </div>
+          </form>
+        </fieldset>
+        <div class="submit-both">
+          <input type="button" value="Submit Both" id="sendAll" />
+        </div>
+      </div>
+      
+    </div>
+  </body>
+</html>
