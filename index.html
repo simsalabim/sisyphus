@@ -55,13 +55,16 @@
       .form-wrap {margin: 30px auto; text-align: left; padding: 15px; }
       .submit-both {margin: 25px 0 0 0; text-align: center;}
       .form-legend {color: #CC00CC; font-weight: bold;}
+      
+      .jnotify-container { width: 450px; left: 30%; }
     </style>
     <script type="text/javascript">
     $(function(){
       $('#form1, #form2').sisyphus({
-        onSaveCallback: function() {$.jnotify('Data are saved to Local Storage', 2000);},
-        onRestoreCallback: function() {$.jnotify('Data are restored from Local Storage', 2000);},
-        onReleaseDataCallback: function() {$.jnotify('Data are removed from Local Storage', 'warning', 2000);}
+        timeout: 15,
+        onSaveCallback: function() {$.jnotify('Data are saved to Local Storage', 500);},
+        onRestoreCallback: function() {$.jnotify('Data are restored from Local Storage', 500);},
+        onReleaseDataCallback: function() {$.jnotify('Data are removed from Local Storage', 'warning', 500);}
       });
       //$('form').sisyphus(); - equivalent variant
       
