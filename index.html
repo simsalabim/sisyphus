@@ -39,9 +39,9 @@
       .action { text-decoration: underline; cursor: pointer; color: #4F7EEA; }
       .code { background: #E0DEDE;  color: #444444; padding: 10px;  font-family: Monaco,Consolas,"Lucida Console",monospace; 
         margin: 10px 0;}
-       span.code { background: #E0DEDE; padding: 1px 5px; color: #444444;}
+       span.code { background: #E0DEDE; padding: 1px 5px; color: #444444; }
       .text { margin: 10px 0 0 0;}
-      .field { margin: 10px 0 20px 0;}
+      .field { margin: 10px 0 20px 0; }
       
       .cell h2 { display: inline; }
       .inline { display: inline; }
@@ -60,25 +60,33 @@
     </style>
     <script type="text/javascript">
     $(function(){
+      $('select, input, textarea').uniform();
+    
       $('#form1, #form2').sisyphus({
         timeout: 15,
         onSaveCallback: function() {$.jnotify('Data are saved to Local Storage', 500);},
-        onRestoreCallback: function() {$.jnotify('Data are restored from Local Storage', 500);},
-        onReleaseDataCallback: function() {$.jnotify('Data are removed from Local Storage', 'warning', 500);}
+        onRestoreCallback: function() {
+          $.jnotify('Data are restored from Local Storage', 500);
+          setTimeout(function(){
+            $.uniform.update('input');
+          }, 100);
+        },
+        onReleaseDataCallback: function() {
+          $.jnotify('Data are removed from Local Storage', 'warning', 500);
+          // kludje on Uniform.js bug
+          setTimeout(function(){
+            $.uniform.update('input');
+          }, 100);
+        }
       });
+      
       //$('form').sisyphus(); - equivalent variant
       
-      $('select, input, textarea').uniform();
       $('#sendAll').click(function(){
         $('#form1').submit();
         $('#form2').submit();
       });
-      $('#form1').bind('reset', function(event){
-        // kludje on Uniform.js bug
-        setTimeout(function(){
-          $.uniform.update('input');
-        }, 100)
-      });
+      
     }); 
     </script>
     <script type="text/javascript">
