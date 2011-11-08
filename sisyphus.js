@@ -37,7 +37,7 @@ var Sisyphus =(function() {
 					onRestoreCallback: function() {},
 					onReleaseDataCallback: function() {}
 				};
-				this.options = $.extend( defaults, options );
+				this.options = this.options || $.extend( defaults, options );
 			}, 
 			
 			/**
@@ -49,21 +49,43 @@ var Sisyphus =(function() {
 			 * @return void
 			 */
 			protect: function( targets ) {
-				if (! this.isLocalStorageAvailable()) {
+				targets = targets || {};
+				var self = this;
+				this.targets = this.targets || [];
+				this.href = location.hostname + location.pathname + location.search;
+				
+				this.targets = $.merge( this.targets, targets );
+				this.targets = $.unique( this.targets );
+				
+				/* kludje on $.unique don't work with loading spec fixtures */
+				var targetsHtml = [];
+				$( this.targets ).each( function() {
+					targetsHtml.push( $( this ).html() );
+				} )
+				targets = [];
+				var targetsIds = [];
+				$( targetsHtml ).each( function( i, o ) {
+					if ( $.inArray(  o, targets ) === -1) {
+						targetsIds.push( i );
+						targets.push( o );
+					}
+				} )
+				targets = [];
+				$( targetsIds ).each( function( i, id ) {
+					targets.push( self.targets[id] );
+				} )
+				this.targets = targets;
+				/* end of kludje */
+				
+				
+				this.targets = $( this.targets );
+				if ( ! this.isLocalStorageAvailable() ) {
 					return false;
 				}
-
-				this.href = location.hostname + location.pathname + location.search;
-				var self = this;
 				
-				targets.each( function() {
-					var target = $( this );
-					var protectedFields = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
-					self.bindSaveAndRestoreData( protectedFields );
-					self.bindReleaseDataOnSubmitOrReset( protectedFields );
-				} );
-					
-				return true;
+				self.restoreFormsData();
+				self.bindSaveData();
+				self.bindReleaseData();
 			},
 			
 			
@@ -75,43 +97,67 @@ var Sisyphus =(function() {
 			isLocalStorageAvailable: function() {
 				try {
 					return localStorage.getItem;
-				} catch (e) {
+				} catch ( e ) {
 					return false;
 				}
 			},
 			
 			
 			/**
-			 * Restore form fields data and bind saving it's instant condition to local storage
-			 *
-			 * @param Object protectedFields	jQuery object contains form fields to protect
+			 * Bind saving data
 			 *
 			 * @return void
 			 */
-			bindSaveAndRestoreData: function( protectedFields ) {
+			bindSaveData: function() {
 				var self = this;
-				var restored = false;
-				var targetFormId = protectedFields.parents( "form" ).attr( "id" );
-				protectedFields.each( function() {
-					var field = $(this);
-					var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
-					var resque = localStorage.getItem( prefix );
-					if (resque) {
-						self.restoreData( field, resque );
-						restored = true;
-					}
-					if ( field.is( ":text" ) || field.is( "textarea" ) ) {
-						if ( ! self.options.timeout ) {
-							self.bindSaveDataImmediately( field, prefix );
-						}
-					} else {
-						self.bindSaveDataOnChange( field, prefix );
-					}
-				} );
 				
 				if ( self.options.timeout ) {
-					self.bindSaveDataByTimeout( protectedFields );
+					self.bindSaveDataByTimeout();
 				}
+				
+				self.targets.each( function() {
+					var targetFormId = $( this ).attr( "id" );
+					var protectedFields = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+					
+					protectedFields.each( function() {
+						var field = $( this );
+						var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
+						if ( field.is( ":text" ) || field.is( "textarea" ) ) {
+							if ( ! self.options.timeout ) {
+								self.bindSaveDataImmediately( field, prefix );
+							}
+						} else {
+							self.bindSaveDataOnChange( field, prefix );
+						}
+					} );
+				} )
+			},
+			
+			
+			/**
+			 * Restore forms data from Local Storage
+			 *
+			 * @return void
+			 */
+			restoreFormsData: function() {
+				var self = this;
+				var restored = false;
+				
+				self.targets.each( function() {
+					var target = $( this );
+					var targetFormId = target.attr( "id" );
+					var protectedFields = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+					
+					protectedFields.each( function() {
+						var field = $( this );
+						var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
+						var resque = localStorage.getItem( prefix );
+						if ( resque ) {
+							self.restoreData( field, resque );
+							restored = true;
+						}
+					} );
+				} );
 				
 				if ( restored && $.isFunction( self.options.onRestoreCallback ) ) {
 					self.options.onRestoreCallback.call();
@@ -201,7 +247,7 @@ var Sisyphus =(function() {
 						if ( elem.attr( "name" ).indexOf( "[" ) != -1 ) {
 							value = [];
 							$( "[name='" + elem.attr( "name" ) +"']:checked" ).each( function() {
-								value.push( $(this).val() );
+								value.push( $( this ).val() );
 							} );
 						} else {
 							value = elem.is( ":checked" );
@@ -219,24 +265,25 @@ var Sisyphus =(function() {
 			/**
 			 * Bind saving (by timeout) field data to local storage when user fills it
 			 *
-			 * @param Object protectedFields	jQuery form elements tuple
-			 *
 			 * @return void
 			 */
-			bindSaveDataByTimeout: function( protectedFields ) {
+			bindSaveDataByTimeout: function() {
 				var self = this;
-				setTimeout( (function( protectedFields ) {
+				var targetForms = self.targets;
+				setTimeout( (function( targetForms ) {
 					function timeout() {
-						protectedFields.each( function() {
-							var elem = $( this );
-							if ( elem.is( ":text" ) || elem.is( "textarea" ) ) {
-								var prefix = self.href + elem.parents( "form" ).attr( "id" ) + elem.attr( "name" ) + self.options.customKeyPrefix;
+						self.targets.each( function() {
+							var targetFormId = $( this ).attr( "id" );
+							var protectedFields = $( this ).find( ":text, textarea" );
+							protectedFields.each( function() {
+								var elem = $( this );
+								var prefix = self.href + targetFormId + elem.attr( "name" ) + self.options.customKeyPrefix;
 								try {
 									localStorage.setItem( prefix, elem.val() );
 								} catch (e) {
 									//QUOTA_EXCEEDED_ERR
 								}
-							}
+							})
 						} );
 						if ( $.isFunction( self.options.onSaveCallback ) ) {
 							self.options.onSaveCallback.call();
@@ -244,42 +291,48 @@ var Sisyphus =(function() {
 						setTimeout( timeout, self.options.timeout * 1000 );
 					}
 					return timeout;
-				})(protectedFields), self.options.timeout * 1000 );
+				})(targetForms), self.options.timeout * 1000 );
 			},
 			
 			
 			/**
 			 * Bind release form fields data from local storage on submit/reset form
 			 *
-			 * @param Object protectedFields	jQuery object contains form fields to protect
-			 *
 			 * @return void
 			 */
-			bindReleaseDataOnSubmitOrReset: function( protectedFields ) {
+			bindReleaseData: function() {
 				var self = this;
-				protectedFields.parents( "form" ).bind( "submit reset", function() {
-					self.releaseData( protectedFields );
-				} );
+				self.targets.each( function( i ) {
+					var target = $( this);
+					var protectedFields = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+					var formId = target.attr( "id" );
+					$( this ).bind( "submit reset", function() {
+						self.releaseData( formId, protectedFields );
+					} )
+				} )
+				
+				
 			},
 			
 			
 			/**
 			 * Bind release form fields data from local storage on submit/resett form
 			 *
+			 * @param String targetFormId
 			 * @param Object protectedFields	jQuery object contains form fields to protect
 			 *
 			 * @return void
 			 */
-			releaseData: function( protectedFields ) {
+			releaseData: function( targetFormId, protectedFields ) {
 				var released = false;
 				var self = this;
-				var targetFormId = protectedFields.parents( "form" ).attr( "id" );
 				protectedFields.each( function() {
-					field = $(this);
+					field = $( this );
 					var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
 					localStorage.removeItem( prefix );
 					released = true;
 				} );
+				
 				if ( released && $.isFunction( self.options.onReleaseDataCallback ) ) {
 					self.options.onReleaseDataCallback.call();
 				}
