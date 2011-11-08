@@ -63,20 +63,26 @@
       $('select, input, textarea').uniform();
     
       $('#form1, #form2').sisyphus({
+      //$('#form1').sisyphus({
         timeout: 15,
-        onSaveCallback: function() {$.jnotify('Data are saved to Local Storage', 500);},
+        onSaveCallback: function() {
+          $.jnotify('Data are saved to Local Storage', 500);
+          setTimeout(function(){
+            $.uniform.update('input, select');
+          }, 200);
+        },
         onRestoreCallback: function() {
           $.jnotify('Data are restored from Local Storage', 500);
           setTimeout(function(){
-            $.uniform.update('input');
-          }, 100);
+            $.uniform.update('input, select');
+          }, 200);
         },
         onReleaseDataCallback: function() {
           $.jnotify('Data are removed from Local Storage', 'warning', 500);
           // kludje on Uniform.js bug
           setTimeout(function(){
-            $.uniform.update('input');
-          }, 100);
+            $.uniform.update('input, select');
+          }, 200);
         }
       });
       

@@ -7,17 +7,32 @@ describe("jQuery.sisyphus", function() {
 		sisyphus.setOptions({});
 		targetForm = $( "form:first" );
 		sisyphus.protect(targetForm);
-		
+	} );
+	
+	
+	it( "should return same instances", function() {
+		var sisyphus1 = Sisyphus.getInstance(),
+			sisyphus2 = Sisyphus.getInstance();
+		expect(sisyphus1).toEqual(sisyphus2);
+	} );
+	
+	
+	it( "should have instances with common optins", function() {
+		var sisyphus1 = Sisyphus.getInstance(),
+			sisyphus2 = Sisyphus.getInstance();
+		sisyphus1.setOptions( { timeout: 5 } );
+		sisyphus2.setOptions( { timeout: 15 } );
+		expect(sisyphus1.options).toEqual(sisyphus2.options);
 	} );
 	
 	
 	it( "should return false if Local Storage is unavailable", function() {
-	  spyOn(sisyphus, 'isLocalStorageAvailable').andCallFake(function() {return false;});;
+	  spyOn(sisyphus, 'isLocalStorageAvailable').andCallFake(function() {return false;});
 	  expect(sisyphus.protect(targetForm)).toEqual(false);
 	} );
 	
 	
-	it( "should save textfied data on key input, if options.timeout is not set", function() {
+	it( "should save textfield data on key input, if options.timeout is not set", function() {
 		spyOn( sisyphus, "saveToLocalStorage" );
 		$( ":text:first", targetForm ).trigger( "oninput" );
 		expect( sisyphus.saveToLocalStorage ).toHaveBeenCalled();
@@ -57,7 +72,7 @@ describe("jQuery.sisyphus", function() {
 	
 	it( "should fire callback on removing data from Local Storage", function() {
 		spyOn( sisyphus.options, "onReleaseDataCallback" );
-		sisyphus.releaseData( targetForm.find( ":text" ) );
+		sisyphus.releaseData( targetForm.attr( "id" ), targetForm.find( ":text" ) );
 		expect(sisyphus.options.onReleaseDataCallback).toHaveBeenCalled();
 	} );
 	
