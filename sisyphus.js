@@ -93,7 +93,7 @@ var Sisyphus =(function() {
 				var restored = false;
 				var targetFormId = protectedFields.parents( "form" ).attr( "id" );
 				protectedFields.each( function() {
-					field = $(this);
+					var field = $(this);
 					var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
 					var resque = localStorage.getItem( prefix );
 					if (resque) {
@@ -230,7 +230,7 @@ var Sisyphus =(function() {
 						protectedFields.each( function() {
 							var elem = $( this );
 							if ( elem.is( ":text" ) || elem.is( "textarea" ) ) {
-								var prefix = self.href + elem.parents( "form" ).attr( "id" ) + field.attr( "name" ) + self.options.customKeyPrefix;
+								var prefix = self.href + elem.parents( "form" ).attr( "id" ) + elem.attr( "name" ) + self.options.customKeyPrefix;
 								try {
 									localStorage.setItem( prefix, elem.val() );
 								} catch (e) {
