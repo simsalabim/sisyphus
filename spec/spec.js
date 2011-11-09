@@ -1,4 +1,4 @@
-describe("jQuery.sisyphus", function() {
+describe("Sisyphus", function() {
 	var sisyphus, targetForm;
 	
 	beforeEach( function() {
@@ -38,31 +38,49 @@ describe("jQuery.sisyphus", function() {
 		expect( sisyphus.saveToLocalStorage ).toHaveBeenCalled();
 	} );
 	
+	it( "should not save all data, but textfield only on key input, if options.timeout is not set", function() {
+		spyOn( sisyphus, "saveAllData" );
+		$( ":text:first", targetForm ).trigger( "oninput" );
+		expect( sisyphus.saveAllData.callCount ).toEqual( 0 );
+	} );
+	
 	it( "should save textarea data on key input, if options.timeout is not set", function() {
 		spyOn( sisyphus, "saveToLocalStorage" );
 		$( "textarea:first", targetForm ).trigger( "oninput" );
 		expect( sisyphus.saveToLocalStorage ).toHaveBeenCalled();
 	} );
 	
-	it( "should save checkbox data on change", function() {
-		spyOn( sisyphus, "saveToLocalStorage" );
+	it( "should not save all data, but textarea only on key input, if options.timeout is not set", function() {
+		spyOn( sisyphus, "saveAllData" );
+		$( "textarea:first", targetForm ).trigger( "oninput" );
+		expect( sisyphus.saveAllData.callCount ).toEqual( 0 );
+	} );
+	
+	it( "should save all data on checkbox change", function() {
+		spyOn( sisyphus, "saveAllData" );
 		$( ":checkbox:first", targetForm ).trigger( "change" );
-		expect( sisyphus.saveToLocalStorage ).toHaveBeenCalled();
+		expect( sisyphus.saveAllData ).toHaveBeenCalled();
 	} );
 	
-	it( "should save radio data on change", function() {
-		spyOn( sisyphus, "saveToLocalStorage" );
+	it( "should save all data on radio change", function() {
+		spyOn( sisyphus, "saveAllData" );
 		$( ":radio:first", targetForm ).trigger( "change" );
-		expect( sisyphus.saveToLocalStorage ).toHaveBeenCalled();
+		expect( sisyphus.saveAllData ).toHaveBeenCalled();
 	} );
 	
-	it( "should save select's data on change", function() {
-		spyOn( sisyphus, "saveToLocalStorage" );
+	it( "should save all data on select change", function() {
+		spyOn( sisyphus, "saveAllData" );
 		$( "select:first", targetForm ).trigger( "change" );
-		expect( sisyphus.saveToLocalStorage ).toHaveBeenCalled();
+		expect( sisyphus.saveAllData ).toHaveBeenCalled();
 	} );
 	
 	
+	
+	it( "should fire callback ONCE on saving all data to Local Storage", function() {
+		spyOn( sisyphus.options, "onSaveCallback" );
+		sisyphus.saveAllData();
+		expect( sisyphus.options.onSaveCallback.callCount ).toEqual( 1 );
+	} );
 	
 	it( "should fire callback on saving data to Local Storage", function() {
 		spyOn( sisyphus.options, "onSaveCallback" );
