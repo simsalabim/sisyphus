@@ -112,7 +112,7 @@ var Sisyphus =(function() {
 				var self = this;
 				
 				if ( self.options.timeout ) {
-					self.bindSaveDataByTimeout();
+					self.saveDataByTimeout();
 				}
 				
 				self.targets.each( function() {
@@ -131,6 +131,45 @@ var Sisyphus =(function() {
 						}
 					} );
 				} )
+			},
+			
+			
+			/**
+			 * Save all protected forms data to Local Storage.
+			 * Common method, necessary to not lead astray user firing 'data are saved' when select/checkbox/radio
+			 * is changed and saved, while textfield data are saved only by timeout
+			 *
+			 * @return void
+			 */
+			saveAllData: function() {
+				var self = this;
+				self.targets.each( function() {
+					var targetFormId = $( this ).attr( "id" );
+					var protectedFields = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+					protectedFields.each( function() {
+						var elem = $( this );
+						var prefix = self.href + targetFormId + elem.attr( "name" ) + self.options.customKeyPrefix;
+						var value = elem.val();
+						
+						if ( elem.is(":checkbox") ) {
+							if ( elem.attr( "name" ).indexOf( "[" ) != -1 ) {
+								value = [];
+								$( "[name='" + elem.attr( "name" ) +"']:checked" ).each( function() {
+									value.push( $( this ).val() );
+								} );
+							} else {
+								value = elem.is( ":checked" );
+							}
+						}
+						if ( elem.is( ":radio" ) ) {
+							value = elem.val();
+						}
+						self.saveToLocalStorage( prefix, value, false );
+					} );
+				} );
+				if ( $.isFunction( self.options.onSaveCallback ) ) {
+					self.options.onSaveCallback.call();
+				}
 			},
 			
 			
@@ -216,16 +255,19 @@ var Sisyphus =(function() {
 			 *
 			 * @param String key
 			 * @param String value
+			 * @param Boolean [true] fireCallback
 			 *
 			 * @return void
 			 */
-			saveToLocalStorage: function( key, value ) {
+			saveToLocalStorage: function( key, value, fireCallback ) {
+				// if fireCallback is undefined it should be true
+				fireCallback = fireCallback == null ? true : fireCallback;
 				try {
 					localStorage.setItem( key, value + "" );
 				} catch (e) { 
 					//QUOTA_EXCEEDED_ERR
 				}
-				if ( value !== "" && $.isFunction( this.options.onSaveCallback ) ) {
+				if ( fireCallback && value !== "" && $.isFunction( this.options.onSaveCallback ) ) {
 					this.options.onSaveCallback.call();
 				}
 			},
@@ -242,52 +284,22 @@ var Sisyphus =(function() {
 			bindSaveDataOnChange: function( elem, prefix ) {
 				var self = this;
 				elem.change( function() {
-					var value = elem.val();
-					if ( elem.is(":checkbox") ) {
-						if ( elem.attr( "name" ).indexOf( "[" ) != -1 ) {
-							value = [];
-							$( "[name='" + elem.attr( "name" ) +"']:checked" ).each( function() {
-								value.push( $( this ).val() );
-							} );
-						} else {
-							value = elem.is( ":checked" );
-							//alert(value)
-						}
-					}
-					if ( elem.is( ":radio" ) ) {
-						value = elem.val();
-					}
-					self.saveToLocalStorage( prefix, value );
+					self.saveAllData();
 				} );
 			},
 			
 			
 			/**
-			 * Bind saving (by timeout) field data to local storage when user fills it
+			 * Saving (by timeout) field data to local storage when user fills it
 			 *
 			 * @return void
 			 */
-			bindSaveDataByTimeout: function() {
+			saveDataByTimeout: function() {
 				var self = this;
 				var targetForms = self.targets;
 				setTimeout( (function( targetForms ) {
 					function timeout() {
-						self.targets.each( function() {
-							var targetFormId = $( this ).attr( "id" );
-							var protectedFields = $( this ).find( ":text, textarea" );
-							protectedFields.each( function() {
-								var elem = $( this );
-								var prefix = self.href + targetFormId + elem.attr( "name" ) + self.options.customKeyPrefix;
-								try {
-									localStorage.setItem( prefix, elem.val() );
-								} catch (e) {
-									//QUOTA_EXCEEDED_ERR
-								}
-							})
-						} );
-						if ( $.isFunction( self.options.onSaveCallback ) ) {
-							self.options.onSaveCallback.call();
-						}
+						self.saveAllData();
 						setTimeout( timeout, self.options.timeout * 1000 );
 					}
 					return timeout;
