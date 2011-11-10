@@ -5,7 +5,7 @@ describe("Sisyphus", function() {
 		loadFixtures( "fixtures.html" );
 		sisyphus = Sisyphus.getInstance();
 		sisyphus.setOptions( {} );
-		targetForm = $( "form:first" );
+		targetForm = $( "#form1" );
 		sisyphus.protect( targetForm );
 	} );
 	
@@ -64,8 +64,27 @@ describe("Sisyphus", function() {
 	it( "should bind saving data only once - if new call is done it should just add new targets to protect", function() {
 		// #form1 is already being protected from 'beforeEach' method
 		spyOn( sisyphus, "bindSaveData" );
-		sisyphus.protect( "#form2" );
+		sisyphus.protect( $("#form2") );
 		expect( sisyphus.bindSaveData.callCount ).toEqual( 0 );
+	} );
+	
+	it( "if new call is done it should just add new targets to protect", function() {
+		// #form1 is already being protected from 'beforeEach' method
+		var targets1 = 	sisyphus.targets.length,
+						targets2;
+		sisyphus.protect( $("#form2") );
+		targets2 = sisyphus.targets.length;
+		expect( targets1 ).toBeLessThan( targets2 );
+	} );
+	
+	it( "should not protect the same form twice and more times", function() {
+		// #form1 is already being protected from 'beforeEach' method
+		var targets1 = 	sisyphus.targets.length,
+						targets2;
+		sisyphus.protect( $("#form1") );
+		sisyphus.protect( $("#form1") );
+		targets2 = sisyphus.targets.length;
+		expect( targets1 ).toEqual( targets2 );
 	} );
 	
 	
