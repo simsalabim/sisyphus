@@ -2,33 +2,70 @@ describe("Sisyphus", function() {
 	var sisyphus, targetForm;
 	
 	beforeEach( function() {
-		loadFixtures('fixtures.html');
+		loadFixtures( "fixtures.html" );
 		sisyphus = Sisyphus.getInstance();
-		sisyphus.setOptions({});
+		sisyphus.setOptions( {} );
 		targetForm = $( "form:first" );
-		sisyphus.protect(targetForm);
+		sisyphus.protect( targetForm );
+	} );
+	
+	afterEach( function() {
+		sisyphus = Sisyphus.free();
 	} );
 	
 	
-	it( "should return same instances", function() {
+	it( "should return an object on instantiating", function() {
+		var sisyphus1 = Sisyphus.getInstance();
+		expect( typeof sisyphus1 ).toEqual( "object" );
+	} );
+	
+	it( "should return null on freeing", function() {
+		sisyphus = Sisyphus.free();
+		expect( sisyphus ).toEqual( null );
+	} );
+	
+	it( "should return the same instance", function() {
 		var sisyphus1 = Sisyphus.getInstance(),
 			sisyphus2 = Sisyphus.getInstance();
-		expect(sisyphus1).toEqual(sisyphus2);
+		expect( sisyphus1 ).toEqual( sisyphus2 );
 	} );
 	
 	
-	it( "should have instances with common optins", function() {
+	it( "should have instances with common options, i.e. be a Singleton", function() {
 		var sisyphus1 = Sisyphus.getInstance(),
 			sisyphus2 = Sisyphus.getInstance();
-		sisyphus1.setOptions( { timeout: 5 } );
-		sisyphus2.setOptions( { timeout: 15 } );
-		expect(sisyphus1.options).toEqual(sisyphus2.options);
+		
+		sisyphus1.setOptions( { 
+			timeout: 5 
+		} );
+		sisyphus2.setOptions( { 
+			timeout: 15
+		} );
+		expect( sisyphus1.options ).toEqual( sisyphus2.options );
 	} );
 	
 	
 	it( "should return false if Local Storage is unavailable", function() {
-	  spyOn(sisyphus, 'isLocalStorageAvailable').andCallFake(function() {return false;});
-	  expect(sisyphus.protect(targetForm)).toEqual(false);
+		spyOn( sisyphus, "isLocalStorageAvailable" ).andCallFake( function() { 
+			return false;
+		} );
+		expect( sisyphus.protect( targetForm ) ).toEqual( false );
+	} );
+	
+	
+	it( "should bind saving data only once", function() {
+		sisyphus = Sisyphus.free();
+		sisyphus = Sisyphus.getInstance();
+		spyOn( sisyphus, "bindSaveData" );
+		sisyphus.protect( "form" );
+		expect( sisyphus.bindSaveData.callCount ).toEqual( 1 );
+	} );
+	
+	it( "should bind saving data only once - if new call is done it should just add new targets to protect", function() {
+		// #form1 is already being protected from 'beforeEach' method
+		spyOn( sisyphus, "bindSaveData" );
+		sisyphus.protect( "#form2" );
+		expect( sisyphus.bindSaveData.callCount ).toEqual( 0 );
 	} );
 	
 	
@@ -75,7 +112,6 @@ describe("Sisyphus", function() {
 	} );
 	
 	
-	
 	it( "should fire callback ONCE on saving all data to Local Storage", function() {
 		spyOn( sisyphus.options, "onSaveCallback" );
 		sisyphus.saveAllData();
@@ -95,3 +131,22 @@ describe("Sisyphus", function() {
 	} );
 	
 });
+
+
+describe("jQuery.sisyphus", function() {
+	var targetForm;
+	
+	beforeEach( function() {
+		loadFixtures( "fixtures.html" );
+		targetForm = $( "form:first" );
+	} );
+	
+	
+	it( "should return a Sisyphus instance", function() {
+		var o =  $( "form:first" ).sisyphus(),
+			sisyphus = Sisyphus.getInstance();
+		expect( o ).toEqual( sisyphus );
+	} );
+	
+});
+
