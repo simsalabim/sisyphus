@@ -13,14 +13,21 @@ $.sisyphus = function() {
 $.fn.sisyphus = function( options ) {
 	var sisyphus = Sisyphus.getInstance();
 	sisyphus.setOptions( options )
-	sisyphus.protect(this);
+	sisyphus.protect( this );
+	return sisyphus;
 };
 	
-var Sisyphus =(function() {
-	var instantiated;
+var Sisyphus = ( function() {
+	var params = {
+		instantiated: null,
+		started: null
+	};
 	
 	function init () {
+		
 		return {
+			
+			
 			/**
 			 * Set plugin options
 			 *
@@ -39,6 +46,7 @@ var Sisyphus =(function() {
 				};
 				this.options = this.options || $.extend( defaults, options );
 			}, 
+			
 			
 			/**
 			 * Protect specified forms, store it's fields data to local storage and restore them on page load
@@ -83,9 +91,12 @@ var Sisyphus =(function() {
 					return false;
 				}
 				
-				self.restoreFormsData();
-				self.bindSaveData();
+				self.restoreAllData();
 				self.bindReleaseData();
+				if ( ! params.started ) {
+					self.bindSaveData();
+					params.started = true;
+				}
 			},
 			
 			
@@ -117,9 +128,9 @@ var Sisyphus =(function() {
 				
 				self.targets.each( function() {
 					var targetFormId = $( this ).attr( "id" );
-					var protectedFields = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+					var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
 					
-					protectedFields.each( function() {
+					fieldsToProtect.each( function() {
 						var field = $( this );
 						var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
 						if ( field.is( ":text" ) || field.is( "textarea" ) ) {
@@ -145,24 +156,24 @@ var Sisyphus =(function() {
 				var self = this;
 				self.targets.each( function() {
 					var targetFormId = $( this ).attr( "id" );
-					var protectedFields = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
-					protectedFields.each( function() {
-						var elem = $( this );
-						var prefix = self.href + targetFormId + elem.attr( "name" ) + self.options.customKeyPrefix;
-						var value = elem.val();
+					var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+					fieldsToProtect.each( function() {
+						var field = $( this );
+						var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
+						var value = field.val();
 						
-						if ( elem.is(":checkbox") ) {
-							if ( elem.attr( "name" ).indexOf( "[" ) != -1 ) {
+						if ( field.is(":checkbox") ) {
+							if ( field.attr( "name" ).indexOf( "[" ) != -1 ) {
 								value = [];
-								$( "[name='" + elem.attr( "name" ) +"']:checked" ).each( function() {
+								$( "[name='" + field.attr( "name" ) +"']:checked" ).each( function() {
 									value.push( $( this ).val() );
 								} );
 							} else {
-								value = elem.is( ":checked" );
+								value = field.is( ":checked" );
 							}
 						}
-						if ( elem.is( ":radio" ) ) {
-							value = elem.val();
+						if ( field.is( ":radio" ) ) {
+							value = field.val();
 						}
 						self.saveToLocalStorage( prefix, value, false );
 					} );
@@ -178,21 +189,21 @@ var Sisyphus =(function() {
 			 *
 			 * @return void
 			 */
-			restoreFormsData: function() {
+			restoreAllData: function() {
 				var self = this;
 				var restored = false;
 				
 				self.targets.each( function() {
 					var target = $( this );
 					var targetFormId = target.attr( "id" );
-					var protectedFields = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+					var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
 					
-					protectedFields.each( function() {
+					fieldsToProtect.each( function() {
 						var field = $( this );
 						var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
 						var resque = localStorage.getItem( prefix );
 						if ( resque ) {
-							self.restoreData( field, resque );
+							self.restoreFieldsData( field, resque );
 							restored = true;
 						}
 					} );
@@ -207,23 +218,23 @@ var Sisyphus =(function() {
 			/**
 			 * Restore form field data from local storage
 			 *
-			 * @param Object elem		jQuery form element object
+			 * @param Object field		jQuery form fieldent object
 			 * @param String resque	previously stored fields data
 			 *
 			 * @return void
 			 */
-			restoreData: function( elem, resque ) {
-				if ( elem.is(":checkbox") && resque !== false && elem.attr("name").indexOf("[") === -1 ) {
-					elem.attr( "checked", "checked" );
-				} else if ( elem.is(":radio") ) {
-					if (elem.val() === resque) {
-						elem.attr("checked", "checked");
+			restoreFieldsData: function( field, resque ) {
+				if ( field.is(":checkbox") && resque !== false && field.attr("name").indexOf("[") === -1 ) {
+					field.attr( "checked", "checked" );
+				} else if ( field.is(":radio") ) {
+					if (field.val() === resque) {
+						field.attr("checked", "checked");
 					}
-				} else if ( elem.attr( "name" ).indexOf( "[" ) === -1 ) {
-					elem.val( resque ); 
+				} else if ( field.attr( "name" ).indexOf( "[" ) === -1 ) {
+					field.val( resque ); 
 				} else {
 					resque = resque.split( "," );
-					elem.val( resque ); 
+					field.val( resque ); 
 				}
 			},
 			
@@ -231,20 +242,20 @@ var Sisyphus =(function() {
 			/**
 			 * Bind immediate saving (on typing/checking/changing) field data to local storage when user fills it
 			 *
-			 * @param Object elem		jQuery form element object
+			 * @param Object field		jQuery form fieldent object
 			 * @param String prefix	prefix used as key to store data in local storage
 			 *
 			 * @return void
 			 */
-			bindSaveDataImmediately: function( elem, prefix ) {
+			bindSaveDataImmediately: function( field, prefix ) {
 				var self = this;
 				if ( $.browser.msie == null ) {
-					elem.get(0).oninput = function() {
-						self.saveToLocalStorage( prefix, elem.val() );
+					field.get(0).oninput = function() {
+						self.saveToLocalStorage( prefix, field.val() );
 					}
 				} else {
-					elem.get(0).onpropertychange = function() {
-						self.saveToLocalStorage( prefix, elem.val() );
+					field.get(0).onpropertychange = function() {
+						self.saveToLocalStorage( prefix, field.val() );
 					}
 				}
 			},
@@ -276,14 +287,14 @@ var Sisyphus =(function() {
 			/**
 			 * Bind saving field data on change
 			 *
-			 * @param Object elem		jQuery form element object
+			 * @param Object field		jQuery form fieldent object
 			 * @param String prefix	prefix used as key to store data in local storage
 			 *
 			 * @return void
 			 */
-			bindSaveDataOnChange: function( elem, prefix ) {
+			bindSaveDataOnChange: function( field, prefix ) {
 				var self = this;
-				elem.change( function() {
+				field.change( function() {
 					self.saveAllData();
 				} );
 			},
@@ -297,13 +308,13 @@ var Sisyphus =(function() {
 			saveDataByTimeout: function() {
 				var self = this;
 				var targetForms = self.targets;
-				setTimeout( (function( targetForms ) {
+				setTimeout( ( function( targetForms ) {
 					function timeout() {
 						self.saveAllData();
 						setTimeout( timeout, self.options.timeout * 1000 );
 					}
 					return timeout;
-				})(targetForms), self.options.timeout * 1000 );
+				} )( targetForms ), self.options.timeout * 1000 );
 			},
 			
 			
@@ -316,10 +327,10 @@ var Sisyphus =(function() {
 				var self = this;
 				self.targets.each( function( i ) {
 					var target = $( this);
-					var protectedFields = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+					var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
 					var formId = target.attr( "id" );
 					$( this ).bind( "submit reset", function() {
-						self.releaseData( formId, protectedFields );
+						self.releaseData( formId, fieldsToProtect );
 					} )
 				} )
 				
@@ -331,15 +342,15 @@ var Sisyphus =(function() {
 			 * Bind release form fields data from local storage on submit/resett form
 			 *
 			 * @param String targetFormId
-			 * @param Object protectedFields	jQuery object contains form fields to protect
+			 * @param Object fieldsToProtect	jQuery object contains form fields to protect
 			 *
 			 * @return void
 			 */
-			releaseData: function( targetFormId, protectedFields ) {
+			releaseData: function( targetFormId, fieldsToProtect ) {
 				var released = false;
 				var self = this;
-				protectedFields.each( function() {
-					field = $( this );
+				fieldsToProtect.each( function() {
+					var field = $( this );
 					var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
 					localStorage.removeItem( prefix );
 					released = true;
@@ -354,11 +365,17 @@ var Sisyphus =(function() {
 	}
 	
 	return {
+		
 		getInstance: function() {
-			if ( ! instantiated){
-				instantiated = init();
+			if ( ! params.instantiated ) {
+				params.instantiated = init();
 			}
-			return instantiated; 
+			return params.instantiated; 
+		},
+		
+		free: function() {
+			params = {};
+			return null;
 		}
 	};
-})();
+} )();
