@@ -64,29 +64,8 @@ var Sisyphus = ( function() {
 				
 				this.targets = $.merge( this.targets, targets );
 				this.targets = $.unique( this.targets );
-				
-				/* kludje on $.unique don't work with loading spec fixtures */
-				var targetsHtml = [];
-				$( this.targets ).each( function() {
-					targetsHtml.push( $( this ).html() );
-				} )
-				targets = [];
-				var targetsIds = [];
-				$( targetsHtml ).each( function( i, o ) {
-					if ( $.inArray(  o, targets ) === -1) {
-						targetsIds.push( i );
-						targets.push( o );
-					}
-				} )
-				targets = [];
-				$( targetsIds ).each( function( i, id ) {
-					targets.push( self.targets[id] );
-				} )
-				this.targets = targets;
-				/* end of kludje */
-				
-				
 				this.targets = $( this.targets );
+				
 				if ( ! this.isLocalStorageAvailable() ) {
 					return false;
 				}

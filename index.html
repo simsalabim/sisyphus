@@ -67,19 +67,21 @@
         timeout: 15,
         onSaveCallback: function() {
           $.jnotify('Data are saved to Local Storage', 500);
+          // kludge on Uniform.js bug
           setTimeout(function(){
             $.uniform.update('input, select');
           }, 200);
         },
         onRestoreCallback: function() {
           $.jnotify('Data are restored from Local Storage', 500);
+          // kludge on Uniform.js bug
           setTimeout(function(){
             $.uniform.update('input, select');
           }, 200);
         },
         onReleaseDataCallback: function() {
           $.jnotify('Data are removed from Local Storage', 'warning', 500);
-          // kludje on Uniform.js bug
+          // kludge on Uniform.js bug
           setTimeout(function(){
             $.uniform.update('input, select');
           }, 200);
