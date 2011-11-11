@@ -32,20 +32,20 @@
         <div class="text">
           
           <h2>What's the problem?</h2>
-          <p>Have you ever had time when during the long tedious form filling or writing an eloquent and passionate commentary your browser was suddenly crashed? Or you closed an active tab mistakenly, or Internet connection was lost, or electricity was turned off (and you've no UPS, by well-known law)? If not - then you are lucky, but no one is protected of such incidents.</p>
+          <p>Have you ever had time when during the long tedious form filling or writing an eloquent and passionate commentary your browser was suddenly crashed? Or you closed an active tab mistakenly, or Internet connection was lost, or electricity was turned off (and you had no UPS, by well-known law)? If not - then you are lucky, but no one is protected of such incidents.</p>
           
           <p>Imagine a storm of emotions felt by the user, just lost all the input data - and in fact he had to add little bit and submit the form. Disgusting, huh? Now, if only there was a way to recover the data, rather than engage in a Sisyphean problem...</p>
           
           <h3>Users custom rake-style solutions</h3>
-          <p>This is true, by the way, even to writing posts on forum. Fairly common practice is to set a long piece of text in files with the periodic preservation and subsequent copy-paste to the web resource. Another variant is to copy-paste just typed text right before form submit. You can save drafts on a regular basis, but not all forums provide such opportunity, and it's not too convenient to do. Best at this are Gmail's drafts with autosave - you just type, all the information is stored and you even don't need to press any button.</p>
+          <p>This is true, by the way, even to writing posts on forums. Fairly common practice is to set a long piece of text in files with the periodic preservation and subsequent copy-paste to web resource. Another option is to copy-paste just typed text right before form submit. You can save drafts on a regular basis, but not all forums have feature like this, and it's not too convenient to do. Best at this are Gmail's drafts with autosave - you just type, all the information is stored and you even don't need to press any button.</p>
           
-          <p>Besides (I was told about that after released Sisyphus), there's Firefox and Chrome extension Lazarus, that helps to recover forms data. But browser extension causes bigger problem - distribution. Some users don't even have an idea of what browser extension is, and since their percentage is high, such solution doesn't make sense to mass user. People able to influence users directly - are web developers, so it seems more humanely to take care of user input while developing site, rather than force them to build skyscraper of extensions.
+          <p>Besides (I was told about that after had released Sisyphus), there's Firefox and Chrome extension Lazarus, that helps to recover forms data. But browser extension causes bigger problem - distribution. Some users don't even have an idea of what browser extension is, and since their percentage is high, such solution doesn't make sense to mass user. People able to influence users directly - are web developers, so it seems more humanely to take care of user input while developing site, rather than force them to build skyscraper of extensions.
           </p>
           
           <h2>A Solution: Sisyphus</h2>
-          <p>Implement autosaving drafts like Google's - a more complex task and not a generic method. I wanted the solution to be simple and fit for re-use which in this case excludes server-side magic.</p>
+          <p>Implementing autosaving drafts like Google's is more complex task and not a generic method. I wanted the solution to be simple and fit for re-use which in this case excludes server-side magic.</p>
           
-          <p>The result was written unpretentious script that can store data entered in the form to Local Storage of your browser and restore  this form by this data on reload/reopen/open-in-separate-tab this page. Local Storage will be freed of forms data on submit or reset.</p>
+          <p>The result was written unpretentious script that can store data entered in the form to Local Storage of your browser and restore them on reload/reopen/open-in-separate-tab page. Local Storage will be freed of forms data on submit or reset.</p>
           
           
           <h2>How to use?</h2>
@@ -59,20 +59,41 @@
           <pre class="code"> {
   customKeyPrefix: '',
   timeout: 0,
-  onSaveCallback: function() {},
-  onRestoreCallback: function() {},
-  onReleaseDataCallback: function() {}
+  onSave: function() {},
+  onRestore: function() {},
+  onRelease: function() {}
  }</pre>
           
           <p><span class="code">customKeyPrefix</span> is an addition to key in Local Storage to store form fields values.</p>
-          <p><span class="code">timeout</span> is an interval in seconds to perform saving data for input:text and textarea fields (selects/checkboxes/radios are saved when changed). If 0 - save every time field is updated.</p>
-          <p><span class="code">onSaveCallback</span> is function fired each time data are saved to Local Storage.</p>
-          <p><span class="code">onRestoreCallback</span> is function fired if form's data are restored from Local Storage. Unlike onSaveCallback it's common for whole form, not for each field.</p>
-          <p><span class="code">onReleaseDataCallback</span> is function fired when Local Storage is freed of previously stored form data.</p>
+          <p><span class="code">timeout</span> is an interval in seconds to perform saving data. If 0 - save every time field is updated.</p>
+          <p><span class="code">onSave</span> is function fired each time data are saved to Local Storage.</p>
+          <p><span class="code">onRestore</span> is function fired if form's data are restored from Local Storage. Unlike onSaveCallback it's common for whole form, not for each field.</p>
+          <p><span class="code">onRelease</span> is function fired when Local Storage is freed of previously stored form data.</p>
           
           <br />
-          <p>For example, following code will force Sisyphus to save each text field value every 5 seconds:</p>
-          <p class="code">$('form').sisyphus({timeout: 5});</p>
+          <p>Since Sisyphus is singleton if it's already running and protecting any form, you can subsequently add protection to any other form and it won't create redundant Sisyphus instances and will use the same options. For example:</p>
+          <pre class="code">// save form1 data every 5 seconds
+$('#form1').sisyphus( {timeout: 5 } );
+
+...
+
+// now you want to protect second form too
+$('#form2').sisyphus( {timeout: 10} )
+
+// at this point both forms data are saved every 10 seconds
+</pre>
+          Of course, you can change options on the fly:
+          <pre class="code">var sisyphus = $('#form1').sisyphus();
+
+...
+
+// now you decided that preservation by timeout is better
+$.sisyphus().setOptions( {timeout: 15} );
+
+...
+
+// or
+sisyphus.setOptions( {timeout: 15} );</pre>
           
           
           <h2>Dependencies</h2>
@@ -90,7 +111,7 @@
             Is also works on Android 2.2 browsers (both on default and Dolphin HD), other mobile platforms weren't tested.
           
           <h2>Download Script</h2>
-          <p><a href="http://simsalabim.github.com/sisyphus/">Sisyphus and demo</a> are hosted on GitHub, minified version is about 2 KB. <a href="https://github.com/simsalabim/sisyphus/issues?labels=feature">Roadmap</a> and <a href="https://github.com/simsalabim/sisyphus/issues?labels=">issue tracker</a> are also available.
+          <p><a href="http://simsalabim.github.com/sisyphus/">Sisyphus and demo</a> are hosted on GitHub, minified version is about 3.5 KB. <a href="https://github.com/simsalabim/sisyphus/issues?labels=feature">Roadmap</a> and <a href="https://github.com/simsalabim/sisyphus/issues?labels=">issue tracker</a> are also available.
           </p>
           
         </div>

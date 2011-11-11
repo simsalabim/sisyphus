@@ -29,6 +29,25 @@ var Sisyphus = ( function() {
 			
 			
 			/**
+			 * Set plugin initial options
+			 *
+			 * @param [Object] options
+			 *
+			 * @return void
+			 */
+			setInitialOptions: function ( options ) {
+				var defaults = {
+					excludeFields: null,
+					customKeyPrefix: "",
+					timeout: 0,
+					onSave: function() {},
+					onRestore: function() {},
+					onRelease: function() {}
+				};
+				this.options = this.options || $.extend( defaults, options );
+			}, 
+			
+			/**
 			 * Set plugin options
 			 *
 			 * @param [Object] options
@@ -36,23 +55,16 @@ var Sisyphus = ( function() {
 			 * @return void
 			 */
 			setOptions: function ( options ) {
-				var defaults = {
-					excludeFields: null,
-					customKeyPrefix: "",
-					timeout: 0,
-					onSaveCallback: function() {},
-					onRestoreCallback: function() {},
-					onReleaseDataCallback: function() {}
-				};
-				this.options = this.options || $.extend( defaults, options );
+				this.options = this.options || this.setInitialOptions( options );
+				this.options = $.extend( this.options, options );
 			}, 
 			
 			
 			/**
 			 * Protect specified forms, store it's fields data to local storage and restore them on page load
 			 *
-			 * @param [Object] targets		forms object(s), result of jQuery selector
-			 * @param Object options		plugin options
+			 * @param [Object] targets    forms object(s), result of jQuery selector
+			 * @param Object options      plugin options
 			 *
 			 * @return void
 			 */
@@ -157,8 +169,8 @@ var Sisyphus = ( function() {
 						self.saveToLocalStorage( prefix, value, false );
 					} );
 				} );
-				if ( $.isFunction( self.options.onSaveCallback ) ) {
-					self.options.onSaveCallback.call();
+				if ( $.isFunction( self.options.onSave ) ) {
+					self.options.onSave.call();
 				}
 			},
 			
@@ -188,8 +200,8 @@ var Sisyphus = ( function() {
 					} );
 				} );
 				
-				if ( restored && $.isFunction( self.options.onRestoreCallback ) ) {
-					self.options.onRestoreCallback.call();
+				if ( restored && $.isFunction( self.options.onRestore ) ) {
+					self.options.onRestore.call();
 				}
 			},
 			
@@ -197,8 +209,8 @@ var Sisyphus = ( function() {
 			/**
 			 * Restore form field data from local storage
 			 *
-			 * @param Object field		jQuery form fieldent object
-			 * @param String resque	previously stored fields data
+			 * @param Object field    jQuery form element object
+			 * @param String resque   previously stored fields data
 			 *
 			 * @return void
 			 */
@@ -221,8 +233,8 @@ var Sisyphus = ( function() {
 			/**
 			 * Bind immediate saving (on typing/checking/changing) field data to local storage when user fills it
 			 *
-			 * @param Object field		jQuery form fieldent object
-			 * @param String prefix	prefix used as key to store data in local storage
+			 * @param Object field    jQuery form element object
+			 * @param String prefix   prefix used as key to store data in local storage
 			 *
 			 * @return void
 			 */
@@ -257,8 +269,8 @@ var Sisyphus = ( function() {
 				} catch (e) { 
 					//QUOTA_EXCEEDED_ERR
 				}
-				if ( fireCallback && value !== "" && $.isFunction( this.options.onSaveCallback ) ) {
-					this.options.onSaveCallback.call();
+				if ( fireCallback && value !== "" && $.isFunction( this.options.onSave ) ) {
+					this.options.onSave.call();
 				}
 			},
 			
@@ -266,8 +278,8 @@ var Sisyphus = ( function() {
 			/**
 			 * Bind saving field data on change
 			 *
-			 * @param Object field		jQuery form fieldent object
-			 * @param String prefix	prefix used as key to store data in local storage
+			 * @param Object field    jQuery form element object
+			 * @param String prefix   prefix used as key to store data in local storage
 			 *
 			 * @return void
 			 */
@@ -305,7 +317,7 @@ var Sisyphus = ( function() {
 			bindReleaseData: function() {
 				var self = this;
 				self.targets.each( function( i ) {
-					var target = $( this);
+					var target = $( this );
 					var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
 					var formId = target.attr( "id" );
 					$( this ).bind( "submit reset", function() {
@@ -321,7 +333,7 @@ var Sisyphus = ( function() {
 			 * Bind release form fields data from local storage on submit/resett form
 			 *
 			 * @param String targetFormId
-			 * @param Object fieldsToProtect	jQuery object contains form fields to protect
+			 * @param Object fieldsToProtect    jQuery object contains form fields to protect
 			 *
 			 * @return void
 			 */
@@ -335,8 +347,8 @@ var Sisyphus = ( function() {
 					released = true;
 				} );
 				
-				if ( released && $.isFunction( self.options.onReleaseDataCallback ) ) {
-					self.options.onReleaseDataCallback.call();
+				if ( released && $.isFunction( self.options.onRelease ) ) {
+					self.options.onRelease.call();
 				}
 			}
 			
@@ -348,6 +360,7 @@ var Sisyphus = ( function() {
 		getInstance: function() {
 			if ( ! params.instantiated ) {
 				params.instantiated = init();
+				params.instantiated.setInitialOptions();
 			}
 			return params.instantiated; 
 		},

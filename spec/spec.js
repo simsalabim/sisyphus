@@ -131,22 +131,22 @@ describe("Sisyphus", function() {
 	} );
 	
 	
-	it( "should fire callback ONCE on saving all data to Local Storage", function() {
-		spyOn( sisyphus.options, "onSaveCallback" );
+	it( "should fire callback once on saving all data to Local Storage", function() {
+		spyOn( sisyphus.options, "onSave" );
 		sisyphus.saveAllData();
-		expect( sisyphus.options.onSaveCallback.callCount ).toEqual( 1 );
+		expect( sisyphus.options.onSave.callCount ).toEqual( 1 );
 	} );
 	
 	it( "should fire callback on saving data to Local Storage", function() {
-		spyOn( sisyphus.options, "onSaveCallback" );
+		spyOn( sisyphus.options, "onSave" );
 		sisyphus.saveToLocalStorage( "key", "value" );
-		expect(sisyphus.options.onSaveCallback).toHaveBeenCalled();
+		expect(sisyphus.options.onSave).toHaveBeenCalled();
 	} );
 	
 	it( "should fire callback on removing data from Local Storage", function() {
-		spyOn( sisyphus.options, "onReleaseDataCallback" );
+		spyOn( sisyphus.options, "onRelease" );
 		sisyphus.releaseData( targetForm.attr( "id" ), targetForm.find( ":text" ) );
-		expect(sisyphus.options.onReleaseDataCallback).toHaveBeenCalled();
+		expect(sisyphus.options.onRelease).toHaveBeenCalled();
 	} );
 	
 });

@@ -65,21 +65,21 @@
       $('#form1, #form2').sisyphus({
       //$('#form1').sisyphus({
         timeout: 15,
-        onSaveCallback: function() {
+        onSave: function() {
           $.jnotify('Data are saved to Local Storage', 500);
           // kludge on Uniform.js bug
           setTimeout(function(){
             $.uniform.update('input, select');
           }, 200);
         },
-        onRestoreCallback: function() {
+        onRestore: function() {
           $.jnotify('Data are restored from Local Storage', 500);
           // kludge on Uniform.js bug
           setTimeout(function(){
             $.uniform.update('input, select');
           }, 200);
         },
-        onReleaseDataCallback: function() {
+        onRelease: function() {
           $.jnotify('Data are removed from Local Storage', 'warning', 500);
           // kludge on Uniform.js bug
           setTimeout(function(){
@@ -124,7 +124,7 @@
           Disgusting, huh?</p>
 
           <p>With <strong>Sisyphus</strong> on site you just reopen page in your modern (with HTML5 support) browser
-          and see all your changes at that forms. It's lightweight <strong>(2Kb)</strong> jQuery plugin uses Local 
+          and see all your changes at that forms. It's lightweight <strong>(3.5 KB)</strong> jQuery plugin uses Local 
           Storage to prevent your work being lost. And Sisyphus is easy to use and needs you just to 
           select forms to protect:</p>
           
@@ -138,16 +138,16 @@
           <pre class="code"> {
   customKeyPrefix: '',
   timeout: 0,
-  onSaveCallback: function() {},
-  onRestoreCallback: function() {},
-  onReleaseDataCallback: function() {}
+  onSave: function() {},
+  onRestore: function() {},
+  onRelease: function() {}
  }</pre>
           
           <p><span class="code">customKeyPrefix</span> is an addition to key in Local Storage to store form fields values</p>
           <p><span class="code">timeout</span> is an interval in seconds to perform saving data. If 0 - save every time field is updated.</p>
-          <p><span class="code">onSaveCallback</span> is function fired each time data are saved to Local Storage</p>
-          <p><span class="code">onRestoreCallback</span> is function fired if form's data are restored from Local Storage. Unlike onSaveCallback it's common for whole form, not for each field</p>
-          <p><span class="code">onReleaseDataCallback</span> is function fired when Local Storage is freed of previously stored form data</p>
+          <p><span class="code">onSave</span> is function fired each time data are saved to Local Storage</p>
+          <p><span class="code">onRestore</span> is function fired if form's data are restored from Local Storage. Unlike onSaveCallback it's common for whole form, not for each field</p>
+          <p><span class="code">onRelease</span> is function fired when Local Storage is freed of previously stored form data</p>
           <p>For example, following code will force Sisyphus to save each text field value every 5 seconds:</p>
           <p class="code">$('form').sisyphus({timeout: 5});</p>
           
