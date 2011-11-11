@@ -149,6 +149,15 @@ describe("Sisyphus", function() {
 		expect(sisyphus.options.onRelease).toHaveBeenCalled();
 	} );
 	
+	it( "should fire callback on restoring data from Local Storage", function() {
+		spyOn( localStorage, "getItem" ).andCallFake( function() { 
+			return "value";
+		} );
+		spyOn( sisyphus.options, "onRestore" );
+		sisyphus.restoreAllData();
+		expect(sisyphus.options.onRestore).toHaveBeenCalled();
+	} );
+	
 });
 
 
