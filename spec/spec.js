@@ -162,18 +162,23 @@ describe("Sisyphus", function() {
 
 
 describe("jQuery.sisyphus", function() {
-	var targetForm;
 	
 	beforeEach( function() {
 		loadFixtures( "fixtures.html" );
-		targetForm = $( "form:first" );
 	} );
 	
 	
 	it( "should return a Sisyphus instance", function() {
-		var o =  $( "form:first" ).sisyphus(),
+		var o =  $( "#form1" ).sisyphus(),
 			sisyphus = Sisyphus.getInstance();
 		expect( o ).toEqual( sisyphus );
+	} );
+	
+	
+	it( "should protect matched forms with Sisyphus", function() {
+		spyOn( Sisyphus.getInstance(), "protect" );
+		$( "#form1" ).sisyphus(),
+		expect(Sisyphus.getInstance().protect).toHaveBeenCalled();
 	} );
 	
 });
