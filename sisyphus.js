@@ -162,11 +162,15 @@ var Sisyphus = ( function() {
 							} else {
 								value = field.is( ":checked" );
 							}
+							self.saveToLocalStorage( prefix, value, false );
+						} else if ( field.is( ":radio" ) ) {
+							if ( field.is( ":checked" ) ) {
+								value = field.val();
+								self.saveToLocalStorage( prefix, value, false );
+							}
+						} else {
+							self.saveToLocalStorage( prefix, value, false );
 						}
-						if ( field.is( ":radio" ) ) {
-							value = field.val();
-						}
-						self.saveToLocalStorage( prefix, value, false );
 					} );
 				} );
 				if ( $.isFunction( self.options.onSave ) ) {
@@ -215,7 +219,7 @@ var Sisyphus = ( function() {
 			 * @return void
 			 */
 			restoreFieldsData: function( field, resque ) {
-				if ( field.is(":checkbox") && resque !== false && field.attr("name").indexOf("[") === -1 ) {
+				if ( field.is(":checkbox") && resque !== 'false' && field.attr("name").indexOf("[") === -1 ) {
 					field.attr( "checked", "checked" );
 				} else if ( field.is(":radio") ) {
 					if (field.val() === resque) {
