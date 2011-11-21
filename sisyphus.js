@@ -79,7 +79,6 @@
 					this.targets = $.merge( this.targets, targets );
 					this.targets = $.unique( this.targets );
 					this.targets = $( this.targets );
-				
 					if ( ! this.isLocalStorageAvailable() ) {
 						return false;
 					}
@@ -122,8 +121,12 @@
 					self.targets.each( function() {
 						var targetFormId = $( this ).attr( "id" );
 						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
-					
+						
 						fieldsToProtect.each( function() {
+							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
+								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
+								return true;
+							}
 							var field = $( this );
 							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
 							if ( field.is( ":text" ) || field.is( "textarea" ) ) {
@@ -150,7 +153,12 @@
 					self.targets.each( function() {
 						var targetFormId = $( this ).attr( "id" );
 						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+						
 						fieldsToProtect.each( function() {
+							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
+								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
+								return true;
+							}
 							var field = $( this );
 							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
 							var value = field.val();
@@ -194,8 +202,12 @@
 						var target = $( this );
 						var targetFormId = target.attr( "id" );
 						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
-					
+						
 						fieldsToProtect.each( function() {
+							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
+								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
+								return true;
+							}
 							var field = $( this );
 							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
 							var resque = localStorage.getItem( prefix );
@@ -347,6 +359,10 @@
 					var released = false;
 					var self = this;
 					fieldsToProtect.each( function() {
+						if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
+							// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
+							return true;
+						}
 						var field = $( this );
 						var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
 						localStorage.removeItem( prefix );
