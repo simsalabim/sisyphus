@@ -140,13 +140,13 @@ describe("Sisyphus", function() {
 	it( "should fire callback on saving data to Local Storage", function() {
 		spyOn( sisyphus.options, "onSave" );
 		sisyphus.saveToLocalStorage( "key", "value" );
-		expect(sisyphus.options.onSave).toHaveBeenCalled();
+		expect( sisyphus.options.onSave ).toHaveBeenCalled();
 	} );
 	
 	it( "should fire callback on removing data from Local Storage", function() {
 		spyOn( sisyphus.options, "onRelease" );
 		sisyphus.releaseData( targetForm.attr( "id" ), targetForm.find( ":text" ) );
-		expect(sisyphus.options.onRelease).toHaveBeenCalled();
+		expect( sisyphus.options.onRelease ).toHaveBeenCalled();
 	} );
 	
 	it( "should fire callback on restoring data from Local Storage", function() {
@@ -155,7 +155,18 @@ describe("Sisyphus", function() {
 		} );
 		spyOn( sisyphus.options, "onRestore" );
 		sisyphus.restoreAllData();
-		expect(sisyphus.options.onRestore).toHaveBeenCalled();
+		expect( sisyphus.options.onRestore ).toHaveBeenCalled();
+	} );
+	
+	it( "should not store excluded fields data", function() {
+		sisyphus.setOptions( {
+			excludeFields: $( "textarea:first" )
+		})
+		$( "textarea:first" ).val( "should not store" );
+		sisyphus.saveAllData();
+		$( "textarea:first" ).val( "" );
+		sisyphus.restoreAllData();
+		expect( $( "textarea:first" ).val() ).toEqual( "" );
 	} );
 	
 });
@@ -178,7 +189,7 @@ describe("jQuery.sisyphus", function() {
 	it( "should protect matched forms with Sisyphus", function() {
 		spyOn( Sisyphus.getInstance(), "protect" );
 		$( "#form1" ).sisyphus(),
-		expect(Sisyphus.getInstance().protect).toHaveBeenCalled();
+		expect( Sisyphus.getInstance().protect ).toHaveBeenCalled();
 	} );
 	
 });
