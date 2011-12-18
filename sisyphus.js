@@ -258,9 +258,10 @@
 				 */
 				bindSaveDataImmediately: function( field, prefix ) {
 					var self = this;
+					var editor;
+					try { editor = $(field.get(0)).ckeditorGet(); } catch(e) {}
 					//for ckeditor
-					if($.isFunction($(field.get(0)).hasOwnProperty('ckeditorGet'))) {
-						editor = $(field.get(0)).ckeditorGet();
+					if(editor) {
 						editor.on('saveSnapshot', function(evt) {
 							self.saveToLocalStorage( prefix, field.val() );
 						});
