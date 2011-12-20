@@ -43,6 +43,7 @@
 						customKeyPrefix: "",
 						timeout: 0,
 						onSave: function() {},
+						onBeforeRestore: function() {},
 						onRestore: function() {},
 						onRelease: function() {}
 					};
@@ -197,25 +198,32 @@
 				restoreAllData: function() {
 					var self = this;
 					var restored = false;
-				
+				    var continueRestore = true;
+					if ( $.isFunction( self.options.onBeforeRestore ) ) {
+						continueRestore = self.options.onBeforeRestore.call();
+					}
 					self.targets.each( function() {
 						var target = $( this );
 						var targetFormId = target.attr( "id" );
 						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
-						
-						fieldsToProtect.each( function() {
-							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
-								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
-								return true;
-							}
-							var field = $( this );
-							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
-							var resque = localStorage.getItem( prefix );
-							if ( resque ) {
-								self.restoreFieldsData( field, resque );
-								restored = true;
-							}
-						} );
+						if(!continueRestore) {
+							self.releaseData();
+						}
+						else {
+							fieldsToProtect.each( function() {
+								if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
+									// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
+									return true;
+								}
+								var field = $( this );
+								var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
+								var resque = localStorage.getItem( prefix );
+								if ( resque ) {
+									self.restoreFieldsData( field, resque );
+									restored = true;
+								}
+							} );
+					}
 					} );
 				
 					if ( restored && $.isFunction( self.options.onRestore ) ) {
