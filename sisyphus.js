@@ -198,16 +198,31 @@
 				restoreAllData: function() {
 					var self = this;
 					var restored = false;
-				    var continueRestore = true;
+					var continueRestore = true;
 					if ( $.isFunction( self.options.onBeforeRestore ) ) {
-						continueRestore = self.options.onBeforeRestore.call();
+						var hasDataToRestore = false;
+						self.targets.each( function() {
+						var target = $( this );
+						var targetFormId = target.attr( "id" );
+						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+						fieldsToProtect.each( function() {
+							var field = $( this );
+							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
+							var resque = localStorage.getItem( prefix );
+							if(resque) {
+								hasDataToRestore = true;
+								return false;
+							}
+						});
+						if(hasDataToRestore)
+							continueRestore = self.options.onBeforeRestore.call();
 					}
 					self.targets.each( function() {
 						var target = $( this );
 						var targetFormId = target.attr( "id" );
 						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
 						if(!continueRestore) {
-                            self.releaseData(targetFormId, fieldsToProtect);
+							self.releaseData(targetFormId, fieldsToProtect);
 						}
 						else {
 							fieldsToProtect.each( function() {
@@ -223,7 +238,7 @@
 									restored = true;
 								}
 							} );
-					}
+						}
 					} );
 				
 					if ( restored && $.isFunction( self.options.onRestore ) ) {
