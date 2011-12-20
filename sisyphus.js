@@ -207,7 +207,7 @@
 						var targetFormId = target.attr( "id" );
 						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
 						if(!continueRestore) {
-							self.releaseData();
+                            self.releaseData(targetFormId, fieldsToProtect);
 						}
 						else {
 							fieldsToProtect.each( function() {
