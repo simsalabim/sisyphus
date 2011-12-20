@@ -202,17 +202,20 @@
 					if ( $.isFunction( self.options.onBeforeRestore ) ) {
 						var hasDataToRestore = false;
 						self.targets.each( function() {
-						var target = $( this );
-						var targetFormId = target.attr( "id" );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
-						fieldsToProtect.each( function() {
-							var field = $( this );
-							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
-							var resque = localStorage.getItem( prefix );
-							if(resque) {
-								hasDataToRestore = true;
+							var target = $( this );
+							var targetFormId = target.attr( "id" );
+							var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+							fieldsToProtect.each( function() {
+								var field = $( this );
+								var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
+								var resque = localStorage.getItem( prefix );
+								if(resque) {
+									hasDataToRestore = true;
+									return false;
+								}
+							});
+							if(hasDataToRestore)
 								return false;
-							}
 						});
 						if(hasDataToRestore)
 							continueRestore = self.options.onBeforeRestore.call();
