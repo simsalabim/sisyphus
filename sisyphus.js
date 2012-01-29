@@ -42,6 +42,7 @@
 						excludeFields: null,
 						customKeyPrefix: "",
 						timeout: 0,
+						autoRelease: true,
 						onSave: function() {},
 						onRestore: function() {},
 						onRelease: function() {}
@@ -84,7 +85,9 @@
 					}
 				
 					self.restoreAllData();
-					self.bindReleaseData();
+					if ( this.options.autoRelease ) {
+						self.bindReleaseData();
+					}                                    
 					if ( ! params.started ) {
 						self.bindSaveData();
 						params.started = true;
@@ -345,6 +348,21 @@
 				
 				
 				},
+                                
+				/**
+				 * Manually release form fields
+				 *
+				 * @return void
+				 */
+				manuallyReleaseData: function() {
+					var self = this;
+					self.targets.each( function( i ) {
+						var target = $( this );
+						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+						var formId = target.attr( "id" );
+						self.releaseData( formId, fieldsToProtect );
+					} )
+				},                                
 			
 			
 				/**
