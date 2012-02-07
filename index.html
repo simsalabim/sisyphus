@@ -57,6 +57,8 @@
       .form-legend {color: #CC00CC; font-weight: bold;}
       
       .jnotify-container { width: 450px; left: 30%; }
+      .github-buttons { height: 32px; width: 135px; float: left; }
+      .email-sign { width: 14px; height: 14px; }
     </style>
     <script type="text/javascript">
     $(function(){
@@ -113,28 +115,28 @@
       <img alt="Fork me on GitHub" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" style="position: absolute; top: 0; right: 0; border: 0;">
     </a>
     <div class="content">
-      <div class="left">
-        <a href="http://github.com/simsalabim/sisyphus">
-          <img src="img/sisyphus.gif" />
-        </a>
-        <div class="text">
-          <p>Imagine you're filling a complex form on site, or typing effervescent and extensive
-          comment. And when you're almost done with that browser is crashed, or you closed tab 
-          mistakenly, or electricity is turned off, or something else break your efforts. 
-          Disgusting, huh?</p>
+    <div class="left">
+      <a href="http://github.com/simsalabim/sisyphus">
+        <img src="img/sisyphus.gif" />
+      </a>
+      <div class="text">
+        <p>Imagine you're filling a complex form on site, or typing effervescent and extensive
+        comment. And when you're almost done with that browser is crashed, or you closed tab
+        mistakenly, or electricity is turned off, or something else break your efforts.
+        Disgusting, huh?</p>
 
-          <p>With <strong>Sisyphus</strong> on site you just reopen page in your modern (with HTML5 support) browser
-          and see all your changes at that forms. It's lightweight <strong>(3.5 KB)</strong> jQuery plugin uses Local 
-          Storage to prevent your work being lost. And Sisyphus is easy to use and needs you just to 
-          select forms to protect:</p>
-          
-          <p class="code">$('#form1, #form2').sisyphus();</p>
-          
-          Or protect all forms on page (for this page these two variants are equal):
-          <p class="code">$('form').sisyphus();</p>
-          <p>Local Storage will be freed of these forms values on submit or reset.</p>
-          
-          <p>Following options are defaults but customizable:</p>
+        <p>With <strong>Sisyphus</strong> on site you just reopen page in your modern (with HTML5 support) browser
+        and see all your changes at that forms. It's lightweight <strong>(3.5 KB)</strong> jQuery plugin uses Local
+        Storage to prevent your work being lost. And Sisyphus is easy to use and needs you just to
+        select forms to protect:</p>
+
+        <p class="code">$('#form1, #form2').sisyphus();</p>
+
+        Or protect all forms on page (for this page these two variants are equal):
+        <p class="code">$('form').sisyphus();</p>
+        <p>Local Storage will be freed of these forms values on submit or reset.</p>
+
+        <p>Following options are defaults but customizable:</p>
           <pre class="code"> {
   customKeyPrefix: '',
   timeout: 0,
@@ -143,35 +145,49 @@
   onRelease: function() {},
   excludeFields: null
  }</pre>
-          
-          <p><span class="code">customKeyPrefix</span> is an addition to key in Local Storage to store form fields values</p>
-          <p><span class="code">timeout</span> is an interval in seconds to perform saving data. If 0 - save every time field is updated.</p>
-          <p><span class="code">onSave</span> is function fired each time data are saved to Local Storage</p>
-          <p><span class="code">onRestore</span> is function fired if form's data are restored from Local Storage. Unlike onSaveCallback it's common for whole form, not for each field</p>
-          <p><span class="code">onRelease</span> is function fired when Local Storage is freed of previously stored form data</p>
-          <p><span class="code">excludeFields</span> is selector to exclude specified fields from observing, ex: $( "textarea, :text" )</p>
-          <p>For example, following code will force Sisyphus to save each text field value every 5 seconds:</p>
-          <p class="code">$('form').sisyphus({timeout: 5});</p>
-          
-          <p>That's it!</p>
-        </div>
-        
+
+        <p><span class="code">customKeyPrefix</span> is an addition to key in Local Storage to store form fields values</p>
+        <p><span class="code">timeout</span> is an interval in seconds to perform saving data. If 0 - save every time field is updated.</p>
+        <p><span class="code">onSave</span> is function fired each time data are saved to Local Storage</p>
+        <p><span class="code">onRestore</span> is function fired if form's data are restored from Local Storage. Unlike onSaveCallback it's common for whole form, not for each field</p>
+        <p><span class="code">onRelease</span> is function fired when Local Storage is freed of previously stored form data</p>
+        <p><span class="code">excludeFields</span> is selector to exclude specified fields from observing, ex: $( "textarea, :text" )</p>
+        <p>For example, following code will force Sisyphus to save each text field value every 5 seconds:</p>
+        <p class="code">$('form').sisyphus({timeout: 5});</p>
+
+        <p>That's it!</p>
       </div>
-      <div class="sample">
-        <div class="download">
-          <a href="http://github.com/simsalabim/sisyphus/zipball/master">
-            <img width="90" border="0" src="http://github.com/images/modules/download/zip.png"></a>
-          <a href="http://github.com/simsalabim/sisyphus/tarball/master">
+
+    </div>
+    <div class="sample">
+      <div class="download">
+        <a href="http://github.com/simsalabim/sisyphus/zipball/master">
+          <img width="90" border="0" src="http://github.com/images/modules/download/zip.png"></a>
+        <a href="http://github.com/simsalabim/sisyphus/tarball/master">
           <img width="90" border="0" src="http://github.com/images/modules/download/tar.png"></a>
-        </div>
-        <h1>
-          <a href="http://github.com/simsalabim/sisyphus">Sisyphus.js</a>
-          <!--<span class="small">by <a href="http://github.com/simsalabim">simsalabim</a></span>-->
-        </h1>
-        <h3>Gmail-like client-side drafts and bit more</h3>
-      
-      
-        <div class="description">
+      </div>
+      <h1>
+        <a href="http://github.com/simsalabim/sisyphus">Sisyphus.js</a>
+        <!--<span class="small">by <a href="http://github.com/simsalabim">simsalabim</a></span>-->
+      </h1>
+      <h3>Gmail-like client-side drafts and bit more</h3>
+
+
+      <!-- AddThis Button BEGIN -->
+      <div class="addthis_toolbox addthis_default_style ">
+        <iframe src="http://markdotto.github.com/github-buttons/github-btn.html?user=simsalabim&repo=sisyphus&type=watch&count=true&size="
+                allowtransparency="true" frameborder="0" scrolling="0" class="github-buttons"></iframe>
+
+        <a class="addthis_button_facebook_like" fb:like:layout="button_count" fb:like:width="140"></a>
+        <a class="addthis_button_tweet"></a>
+        <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+        <a class="addthis_counter addthis_pill_style"></a>
+      </div>
+      <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f1d1dbe54a79998"></script>
+      <!-- AddThis Button END -->
+
+
+      <div class="description">
           Here you may fill forms below in arbitrary way, then close your tab/browser, <span onclick="window.location.reload()" class="action">refresh window</span> or open this page in a <a href="http://simsalabim.github.com/sisyphus/" class="action" target="_blank">new tab</a> to see all your changes are saved and restored.
         </div>
         <fieldset class="form-wrap sexy-border">
@@ -309,10 +325,10 @@
             <p>Sisyphus is released under MIT License</p>
             
             <h2>Authors</h2>
-            <p>Alexander Kaupanin &lt;kaupanin@gmail.com&gt;</p>
-          
+            <p>Alexander Kaupanin &lt;kaupanin<img src="http://pictureimage.brinkster.net/signs/safety/thumbs/email-sign-at-symbol.png" class="email-sign" />gmail dot com&gt;</p>
+
             <h2>Contact</h2>
-            <p>Alexander Kaupanin &lt;kaupanin@gmail.com&gt;</p>
+            <p>Alexander Kaupanin &lt;kaupanin<img src="http://pictureimage.brinkster.net/signs/safety/thumbs/email-sign-at-symbol.png" class="email-sign" />gmail dot com&gt;</p>
           </div>
 
       </div>
