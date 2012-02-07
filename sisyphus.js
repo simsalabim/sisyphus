@@ -44,6 +44,7 @@
 						timeout: 0,
 						autoRelease: true,
 						onSave: function() {},
+						onBeforeRestore: function() {},
 						onRestore: function() {},
 						onRelease: function() {}
 					};
@@ -200,25 +201,50 @@
 				restoreAllData: function() {
 					var self = this;
 					var restored = false;
-				
+					var continueRestore = true;
+					if ( $.isFunction( self.options.onBeforeRestore ) ) {
+						var hasDataToRestore = false;
+						self.targets.each( function() {
+							var target = $( this );
+							var targetFormId = target.attr( "id" );
+							var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+							fieldsToProtect.each( function() {
+								var field = $( this );
+								var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
+								var resque = localStorage.getItem( prefix );
+								if(resque) {
+									hasDataToRestore = true;
+									return false;
+								}
+							});
+							if(hasDataToRestore)
+								return false;
+						});
+						if(hasDataToRestore)
+							continueRestore = self.options.onBeforeRestore.call();
+					}
 					self.targets.each( function() {
 						var target = $( this );
 						var targetFormId = target.attr( "id" );
 						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
-						
-						fieldsToProtect.each( function() {
-							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
-								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
-								return true;
-							}
-							var field = $( this );
-							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
-							var resque = localStorage.getItem( prefix );
-							if ( resque ) {
-								self.restoreFieldsData( field, resque );
-								restored = true;
-							}
-						} );
+						if(!continueRestore) {
+							self.releaseData(targetFormId, fieldsToProtect);
+						}
+						else {
+							fieldsToProtect.each( function() {
+								if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
+									// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
+									return true;
+								}
+								var field = $( this );
+								var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
+								var resque = localStorage.getItem( prefix );
+								if ( resque ) {
+									self.restoreFieldsData( field, resque );
+									restored = true;
+								}
+							} );
+						}
 					} );
 				
 					if ( restored && $.isFunction( self.options.onRestore ) ) {
@@ -261,7 +287,21 @@
 				 */
 				bindSaveDataImmediately: function( field, prefix ) {
 					var self = this;
-					if ( $.browser.msie == null ) {
+					var editor;
+					try { editor = $(field.get(0)).ckeditorGet(); } catch(e) {}
+					//for ckeditor
+					if(editor) {
+						editor.on('saveSnapshot', function(evt) {
+							self.saveToLocalStorage( prefix, field.val() );
+						});
+						editor.getCommand('undo').on( 'afterUndo', function(e) {
+							self.saveToLocalStorage( prefix, field.val() );
+						});
+						editor.getCommand('redo').on( 'afterRedo', function(e) {
+							self.saveToLocalStorage( prefix, field.val() );
+						});
+					}
+					else if ( $.browser.msie == null ) {
 						field.get(0).oninput = function() {
 							self.saveToLocalStorage( prefix, field.val() );
 						}
