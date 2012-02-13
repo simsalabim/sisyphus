@@ -18,7 +18,7 @@
 		return sisyphus;
 	};
 
-  browserStorage = {};
+  var browserStorage = {};
 
  /**
    * Check if local storage or other browser storage is available
@@ -79,7 +79,7 @@
    *
    * @return void
    */
-  browserStorage.delete = function( key ) {
+  browserStorage.remove = function( key ) {
     if ( typeof $.jStorage === "object" ) {
       $.jStorage.deleteKey( key );
     } else {
@@ -434,7 +434,7 @@
 						}
 						var field = $( this );
 						var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
-						self.browserStorage.delete( prefix )
+						self.browserStorage.remove( prefix )
 						released = true;
 					} );
 				
