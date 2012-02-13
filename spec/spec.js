@@ -46,7 +46,7 @@ describe("Sisyphus", function() {
 	
 	
 	it( "should return false if Local Storage is unavailable", function() {
-		spyOn( sisyphus, "isLocalStorageAvailable" ).andCallFake( function() { 
+		spyOn( sisyphus.browserStorage, "isAvailable" ).andCallFake( function() {
 			return false;
 		} );
 		expect( sisyphus.protect( targetForm ) ).toEqual( false );
@@ -89,9 +89,9 @@ describe("Sisyphus", function() {
 	
 	
 	it( "should save textfield data on key input, if options.timeout is not set", function() {
-		spyOn( sisyphus, "saveToLocalStorage" );
+		spyOn( sisyphus, "saveToBrowserStorage" );
 		$( ":text:first", targetForm ).trigger( "oninput" );
-		expect( sisyphus.saveToLocalStorage ).toHaveBeenCalled();
+		expect( sisyphus.saveToBrowserStorage ).toHaveBeenCalled();
 	} );
 	
 	it( "should not save all data, but textfield only on key input, if options.timeout is not set", function() {
@@ -101,9 +101,9 @@ describe("Sisyphus", function() {
 	} );
 	
 	it( "should save textarea data on key input, if options.timeout is not set", function() {
-		spyOn( sisyphus, "saveToLocalStorage" );
+		spyOn( sisyphus, "saveToBrowserStorage" );
 		$( "textarea:first", targetForm ).trigger( "oninput" );
-		expect( sisyphus.saveToLocalStorage ).toHaveBeenCalled();
+		expect( sisyphus.saveToBrowserStorage ).toHaveBeenCalled();
 	} );
 	
 	it( "should not save all data, but textarea only on key input, if options.timeout is not set", function() {
@@ -139,7 +139,7 @@ describe("Sisyphus", function() {
 	
 	it( "should fire callback on saving data to Local Storage", function() {
 		spyOn( sisyphus.options, "onSave" );
-		sisyphus.saveToLocalStorage( "key", "value" );
+		sisyphus.saveToBrowserStorage( "key", "value" );
 		expect( sisyphus.options.onSave ).toHaveBeenCalled();
 	} );
 	
