@@ -317,7 +317,21 @@
 				 */
 				bindSaveDataImmediately: function( field, prefix ) {
 					var self = this;
-					if ( $.browser.msie == null ) {
+					var editor;
+					try { editor = $(field.get(0)).ckeditorGet(); } catch(e) {}
+					//for ckeditor
+					if(editor) {
+						editor.on('saveSnapshot', function(evt) {
+							self.saveToLocalStorage( prefix, field.val() );
+						});
+						editor.getCommand('undo').on( 'afterUndo', function(e) {
+							self.saveToLocalStorage( prefix, field.val() );
+						});
+						editor.getCommand('redo').on( 'afterRedo', function(e) {
+							self.saveToLocalStorage( prefix, field.val() );
+						});
+					}
+					else if ( $.browser.msie == null ) {
 						field.get(0).oninput = function() {
 							self.saveToBrowserStorage( prefix, field.val() );
 						}
