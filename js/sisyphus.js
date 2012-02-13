@@ -18,88 +18,84 @@
 		return sisyphus;
 	};
 
-	
+  browserStorage = {};
+
+ /**
+   * Check if local storage or other browser storage is available
+   *
+   * @return Boolean
+   */
+  browserStorage.isAvailable = function() {
+    if ( typeof $.jStorage === "object" ) {
+      return true;
+    }
+    try {
+      return localStorage.getItem;
+    } catch ( e ) {
+        return false;
+    }
+  }
+
+ /**
+   * Set data to browser storage
+   *
+   * @param [String] key
+   * @param [String] value
+   *
+   * @return Boolean
+   */
+  browserStorage.set = function( key, value ) {
+    if ( typeof $.jStorage === "object" ) {
+      $.jStorage.set( key, value + "" )
+    } else {
+      try {
+        localStorage.setItem( key, value + "" );
+      } catch (e) {
+        //QUOTA_EXCEEDED_ERR
+      }
+    }
+  }
+
+  /**
+   * Get data from browser storage by specified key
+   *
+   * @param [String] key
+   *
+   * @return string
+   */
+  browserStorage.get = function( key ) {
+    if ( typeof $.jStorage === "object" ) {
+      var result = $.jStorage.get( key );
+      return result ? result.toString() : result;
+    } else {
+      return localStorage.getItem( key )
+    }
+  }
+
+  /**
+   * Delete data from browser storage by specified key
+   *
+   * @param [String] key
+   *
+   * @return void
+   */
+  browserStorage.delete = function( key ) {
+    if ( typeof $.jStorage === "object" ) {
+      $.jStorage.deleteKey( key );
+    } else {
+      localStorage.removeItem( key );
+    }
+  }
+
 	Sisyphus = ( function() {
 		var params = {
 			instantiated: null,
 			started: null
 		};
 
-
-		var browserStorage = {};
-
-	 /**
-		 * Check if local storage or other browser storage is available
-		 *
-		 * @return Boolean
-		 */
-		browserStorage.isAvailable = function() {
-			if ( typeof $.jStorage === "object" ) {
-				return true;
-			}
-			try {
-				return localStorage.getItem;
-			} catch ( e ) {
-					return false;
-			}
-		}
-
-	 /**
-		 * Set data to browser storage
-		 *
-		 * @param [String] key
-		 * @param [String] value
-		 *
-		 * @return Boolean
-		 */
-		browserStorage.set = function( key, value ) {
-			if ( typeof $.jStorage === "object" ) {
-				$.jStorage.set( key, value + "" )
-			} else {
-				try {
-					localStorage.setItem( key, value + "" );
-				} catch (e) {
-					//QUOTA_EXCEEDED_ERR
-				}
-			}
-		}
-
-		/**
-		 * Get data from browser storage by specified key
-		 *
-		 * @param [String] key
-		 *
-		 * @return string
-		 */
-		browserStorage.get = function( key ) {
-			if ( typeof $.jStorage === "object" ) {
-				var result = $.jStorage.get( key );
-				return result ? result.toString() : result;
-			} else {
-				return localStorage.getItem( key )
-			}
-		}
-
-		/**
-		 * Delete data from browser storage by specified key
-		 *
-		 * @param [String] key
-		 *
-		 * @return void
-		 */
-		browserStorage.delete = function( key ) {
-			if ( typeof $.jStorage === "object" ) {
-				$.jStorage.deleteKey( key );
-			} else {
-				localStorage.removeItem( key );
-			}
-		}
-	
 		function init () {
 		
 			return {
-			
-			
 				/**
 				 * Set plugin initial options
 				 *
@@ -118,7 +114,8 @@
 						onRelease: function() {}
 					};
 					this.options = this.options || $.extend( defaults, options );
-				}, 
+					this.browserStorage = browserStorage;
+				},
 			
 				/**
 				 * Set plugin options
@@ -150,7 +147,7 @@
 					this.targets = $.merge( this.targets, targets );
 					this.targets = $.unique( this.targets );
 					this.targets = $( this.targets );
-					if ( ! browserStorage.isAvailable() ) {
+					if ( ! this.browserStorage.isAvailable() ) {
 						return false;
 					}
 				
@@ -272,7 +269,7 @@
 							}
 							var field = $( this );
 							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
-							var resque = browserStorage.get( prefix );
+							var resque = self.browserStorage.get( prefix );
 							if ( resque ) {
 								self.restoreFieldsData( field, resque );
 								restored = true;
@@ -344,7 +341,7 @@
 				saveToBrowserStorage: function( key, value, fireCallback ) {
 					// if fireCallback is undefined it should be true
 					fireCallback = fireCallback == null ? true : fireCallback;
-					browserStorage.set( key, value );
+					this.browserStorage.set( key, value );
 					if ( fireCallback && value !== "" && $.isFunction( this.options.onSave ) ) {
 						this.options.onSave.call();
 					}
@@ -437,7 +434,7 @@
 						}
 						var field = $( this );
 						var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
-						browserStorage.delete( prefix )
+						self.browserStorage.delete( prefix )
 						released = true;
 					} );
 				
