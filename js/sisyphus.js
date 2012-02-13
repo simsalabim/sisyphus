@@ -24,6 +24,76 @@
 			instantiated: null,
 			started: null
 		};
+
+
+		var browserStorage = {};
+
+	 /**
+		 * Check if local storage or other browser storage is available
+		 *
+		 * @return Boolean
+		 */
+		browserStorage.isAvailable = function() {
+			if ( typeof $.jStorage === "object" ) {
+				return true;
+			}
+			try {
+				return localStorage.getItem;
+			} catch ( e ) {
+					return false;
+			}
+		}
+
+	 /**
+		 * Set data to browser storage
+		 *
+		 * @param [String] key
+		 * @param [String] value
+		 *
+		 * @return Boolean
+		 */
+		browserStorage.set = function( key, value ) {
+			if ( typeof $.jStorage === "object" ) {
+				$.jStorage.set( key, value + "" )
+			} else {
+				try {
+					localStorage.setItem( key, value + "" );
+				} catch (e) {
+					//QUOTA_EXCEEDED_ERR
+				}
+			}
+		}
+
+		/**
+		 * Get data from browser storage by specified key
+		 *
+		 * @param [String] key
+		 *
+		 * @return string
+		 */
+		browserStorage.get = function( key ) {
+			if ( typeof $.jStorage === "object" ) {
+				var result = $.jStorage.get( key );
+				return result ? result.toString() : result;
+			} else {
+				return localStorage.getItem( key )
+			}
+		}
+
+		/**
+		 * Delete data from browser storage by specified key
+		 *
+		 * @param [String] key
+		 *
+		 * @return void
+		 */
+		browserStorage.delete = function( key ) {
+			if ( typeof $.jStorage === "object" ) {
+				$.jStorage.deleteKey( key );
+			} else {
+				localStorage.removeItem( key );
+			}
+		}
 	
 		function init () {
 		
@@ -42,6 +112,7 @@
 						excludeFields: null,
 						customKeyPrefix: "",
 						timeout: 0,
+						autoRelease: true,
 						onSave: function() {},
 						onRestore: function() {},
 						onRelease: function() {}
@@ -65,8 +136,8 @@
 				/**
 				 * Protect specified forms, store it's fields data to local storage and restore them on page load
 				 *
-				 * @param [Object] targets    forms object(s), result of jQuery selector
-				 * @param Object options      plugin options
+				 * @param [Object] targets		forms object(s), result of jQuery selector
+				 * @param Object options			plugin options
 				 *
 				 * @return void
 				 */
@@ -79,12 +150,14 @@
 					this.targets = $.merge( this.targets, targets );
 					this.targets = $.unique( this.targets );
 					this.targets = $( this.targets );
-					if ( ! this.isLocalStorageAvailable() ) {
+					if ( ! browserStorage.isAvailable() ) {
 						return false;
 					}
 				
 					self.restoreAllData();
-					self.bindReleaseData();
+					if ( this.options.autoRelease ) {
+						self.bindReleaseData();
+					}
 					if ( ! params.started ) {
 						self.bindSaveData();
 						params.started = true;
@@ -92,19 +165,8 @@
 				},
 			
 			
-				/**
-				 * Check if local storage is available
-				 *
-				 * @return Boolean
-				 */
-				isLocalStorageAvailable: function() {
-					try {
-						return localStorage.getItem;
-					} catch ( e ) {
-						return false;
-					}
-				},
-			
+
+
 			
 				/**
 				 * Bind saving data
@@ -172,14 +234,14 @@
 								} else {
 									value = field.is( ":checked" );
 								}
-								self.saveToLocalStorage( prefix, value, false );
+								self.saveToBrowserStorage( prefix, value, false );
 							} else if ( field.is( ":radio" ) ) {
 								if ( field.is( ":checked" ) ) {
 									value = field.val();
-									self.saveToLocalStorage( prefix, value, false );
+									self.saveToBrowserStorage( prefix, value, false );
 								}
 							} else {
-								self.saveToLocalStorage( prefix, value, false );
+								self.saveToBrowserStorage( prefix, value, false );
 							}
 						} );
 					} );
@@ -210,7 +272,7 @@
 							}
 							var field = $( this );
 							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
-							var resque = localStorage.getItem( prefix );
+							var resque = browserStorage.get( prefix );
 							if ( resque ) {
 								self.restoreFieldsData( field, resque );
 								restored = true;
@@ -227,23 +289,23 @@
 				/**
 				 * Restore form field data from local storage
 				 *
-				 * @param Object field    jQuery form element object
-				 * @param String resque   previously stored fields data
+				 * @param Object field		jQuery form element object
+				 * @param String resque	 previously stored fields data
 				 *
 				 * @return void
 				 */
 				restoreFieldsData: function( field, resque ) {
-					if ( field.is(":checkbox") && resque !== 'false' && field.attr("name").indexOf("[") === -1 ) {
+					if ( field.is( ":checkbox" ) && resque !== "false" && field.attr( "name" ).indexOf( "[" ) === -1 ) {
 						field.attr( "checked", "checked" );
-					} else if ( field.is(":radio") ) {
-						if (field.val() === resque) {
-							field.attr("checked", "checked");
+					} else if ( field.is( ":radio" ) ) {
+						if ( field.val() === resque ) {
+							field.attr( "checked", "checked" );
 						}
 					} else if ( field.attr( "name" ).indexOf( "[" ) === -1 ) {
 						field.val( resque ); 
 					} else {
 						resque = resque.split( "," );
-						field.val( resque ); 
+						field.val( resque );
 					}
 				},
 			
@@ -251,8 +313,8 @@
 				/**
 				 * Bind immediate saving (on typing/checking/changing) field data to local storage when user fills it
 				 *
-				 * @param Object field    jQuery form element object
-				 * @param String prefix   prefix used as key to store data in local storage
+				 * @param Object field		jQuery form element object
+				 * @param String prefix	 prefix used as key to store data in local storage
 				 *
 				 * @return void
 				 */
@@ -260,11 +322,11 @@
 					var self = this;
 					if ( $.browser.msie == null ) {
 						field.get(0).oninput = function() {
-							self.saveToLocalStorage( prefix, field.val() );
+							self.saveToBrowserStorage( prefix, field.val() );
 						}
 					} else {
 						field.get(0).onpropertychange = function() {
-							self.saveToLocalStorage( prefix, field.val() );
+							self.saveToBrowserStorage( prefix, field.val() );
 						}
 					}
 				},
@@ -279,14 +341,10 @@
 				 *
 				 * @return void
 				 */
-				saveToLocalStorage: function( key, value, fireCallback ) {
+				saveToBrowserStorage: function( key, value, fireCallback ) {
 					// if fireCallback is undefined it should be true
 					fireCallback = fireCallback == null ? true : fireCallback;
-					try {
-						localStorage.setItem( key, value + "" );
-					} catch (e) { 
-						//QUOTA_EXCEEDED_ERR
-					}
+					browserStorage.set( key, value );
 					if ( fireCallback && value !== "" && $.isFunction( this.options.onSave ) ) {
 						this.options.onSave.call();
 					}
@@ -296,8 +354,8 @@
 				/**
 				 * Bind saving field data on change
 				 *
-				 * @param Object field    jQuery form element object
-				 * @param String prefix   prefix used as key to store data in local storage
+				 * @param Object field		jQuery form element object
+				 * @param String prefix	 prefix used as key to store data in local storage
 				 *
 				 * @return void
 				 */
@@ -345,13 +403,27 @@
 				
 				
 				},
-			
-			
+
+				/**
+				 * Manually release form fields
+				 *
+				 * @return void
+				 */
+				manuallyReleaseData: function() {
+					var self = this;
+					self.targets.each( function( i ) {
+						var target = $( this );
+						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+						var formId = target.attr( "id" );
+						self.releaseData( formId, fieldsToProtect );
+					} )
+				},
+
 				/**
 				 * Bind release form fields data from local storage on submit/resett form
 				 *
 				 * @param String targetFormId
-				 * @param Object fieldsToProtect    jQuery object contains form fields to protect
+				 * @param Object fieldsToProtect		jQuery object contains form fields to protect
 				 *
 				 * @return void
 				 */
@@ -365,7 +437,7 @@
 						}
 						var field = $( this );
 						var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
-						localStorage.removeItem( prefix );
+						browserStorage.delete( prefix )
 						released = true;
 					} );
 				
@@ -378,7 +450,6 @@
 		}
 	
 		return {
-		
 			getInstance: function() {
 				if ( ! params.instantiated ) {
 					params.instantiated = init();
