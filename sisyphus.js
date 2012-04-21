@@ -298,7 +298,7 @@
 						if ( field.val() === resque ) {
 							field.attr( "checked", "checked" );
 						}
-					} else if ( field.attr( "name" ).indexOf( "[" ) === -1 ) {
+					} else if ( field.attr( "name" ).indexOf( "[" ) === -1 && field.attr("multiple") === undefined ) {
 						field.val( resque ); 
 					} else {
 						resque = resque.split( "," );
