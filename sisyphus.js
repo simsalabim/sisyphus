@@ -223,7 +223,7 @@
 							var value = field.val();
 						
 							if ( field.is(":checkbox") ) {
-								if ( field.attr( "name" ).indexOf( "[" ) != -1 ) {
+								if ( (field.attr( "name" ) || "").indexOf( "[" ) != -1 ) {
 									value = [];
 									$( "[name='" + field.attr( "name" ) +"']:checked" ).each( function() {
 										value.push( $( this ).val() );
@@ -292,14 +292,14 @@
 				 * @return void
 				 */
 				restoreFieldsData: function( field, resque ) {
-					if ( field.is( ":checkbox" ) && resque !== "false" && field.attr( "name" ).indexOf( "[" ) === -1 ) {
+					if ( field.is( ":checkbox" ) && resque !== "false" && (field.attr( "name" ) || "").indexOf( "[" ) === -1 ) {
 						field.attr( "checked", "checked" );
 					} else if ( field.is( ":radio" ) ) {
 						if ( field.val() === resque ) {
 							field.attr( "checked", "checked" );
 						}
-					} else if ( field.attr( "name" ).indexOf( "[" ) === -1 ) {
-						field.val( resque ); 
+					} else if ( (field.attr( "name" ) || "").indexOf( "[" ) === -1 ) {
+						field.val( resque );
 					} else {
 						resque = resque.split( "," );
 						field.val( resque );
