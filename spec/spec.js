@@ -1,11 +1,12 @@
 describe("Sisyphus", function() {
-	var sisyphus, targetForm;
+	var sisyphus, targetForm, namedForm;
 	
 	beforeEach( function() {
 		loadFixtures( "fixtures.html" );
 		sisyphus = Sisyphus.getInstance();
 		sisyphus.setOptions( {} );
 		targetForm = $( "#form1" );
+		namedForm = $( "#named" );
 		sisyphus.protect( targetForm );
 	} );
 	
@@ -18,7 +19,7 @@ describe("Sisyphus", function() {
 		var sisyphus1 = Sisyphus.getInstance();
 		expect( typeof sisyphus1 ).toEqual( "object" );
 	} );
-	
+
 	it( "should return null on freeing", function() {
 		sisyphus = Sisyphus.free();
 		expect( sisyphus ).toEqual( null );
@@ -77,6 +78,13 @@ describe("Sisyphus", function() {
 		expect( targets1 ).toBeLessThan( targets2 );
 	} );
 	
+	it( "should allow a custom name for the form", function() {
+		sisyphus = Sisyphus.getInstance();
+		sisyphus.setOptions( { name: "something" } );
+		sisyphus.protect( namedForm );
+		expect ( sisyphus.href ).toEqual( "something" );
+	} );
+
 	it( "should not protect the same form twice and more times", function() {
 		// #form1 is already being protected from 'beforeEach' method
 		var targets1 = 	sisyphus.targets.length,
@@ -184,8 +192,14 @@ describe("jQuery.sisyphus", function() {
 			sisyphus = Sisyphus.getInstance();
 		expect( o ).toEqual( sisyphus );
 	} );
-	
-	
+
+	it( "should set the custom name on the Sisyphus instance", function() {
+		Sisyphus.free()
+		var o = $(" #named" ).sisyphus( { name: "custom-name" } );
+			sisyphus = Sisyphus.getInstance();
+		expect( o.href ).toEqual( "custom-name" );
+	} );
+
 	it( "should protect matched forms with Sisyphus", function() {
 		spyOn( Sisyphus.getInstance(), "protect" );
 		$( "#form1" ).sisyphus(),

@@ -109,6 +109,7 @@
 						customKeyPrefix: "",
 						timeout: 0,
 						autoRelease: true,
+						name: null,
 						onSave: function() {},
 						onRestore: function() {},
 						onRelease: function() {}
@@ -142,7 +143,7 @@
 					targets = targets || {};
 					var self = this;
 					this.targets = this.targets || [];
-					this.href = location.hostname + location.pathname + location.search;
+					this.href = this.options.name || location.hostname + location.pathname + location.search;
 				
 					this.targets = $.merge( this.targets, targets );
 					this.targets = $.unique( this.targets );
