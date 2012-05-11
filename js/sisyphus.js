@@ -179,7 +179,7 @@
 				
 					self.targets.each( function() {
 						var targetFormId = $( this ).attr( "id" );
-						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" );
 						
 						fieldsToProtect.each( function() {
 							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
@@ -211,7 +211,7 @@
 					var self = this;
 					self.targets.each( function() {
 						var targetFormId = $( this ).attr( "id" );
-						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" );
 
 						fieldsToProtect.each( function() {
 							var field = $( this );
@@ -260,7 +260,7 @@
 					self.targets.each( function() {
 						var target = $( this );
 						var targetFormId = target.attr( "id" );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" );
 						
 						fieldsToProtect.each( function() {
 							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
@@ -394,7 +394,7 @@
 					var self = this;
 					self.targets.each( function( i ) {
 						var target = $( this );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" );
 						var formId = target.attr( "id" );
 						$( this ).bind( "submit reset", function() {
 							self.releaseData( formId, fieldsToProtect );
@@ -413,7 +413,7 @@
 					var self = this;
 					self.targets.each( function( i ) {
 						var target = $( this );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
+						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" );
 						var formId = target.attr( "id" );
 						self.releaseData( formId, fieldsToProtect );
 					} )
