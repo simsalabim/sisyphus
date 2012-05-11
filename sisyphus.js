@@ -212,18 +212,18 @@
 					self.targets.each( function() {
 						var targetFormId = $( this ).attr( "id" );
 						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" );
-						
+
 						fieldsToProtect.each( function() {
-							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
-								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
+							var field = $( this );
+							// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
+							if ( $.inArray( this, self.options.excludeFields ) !== -1 || field.attr( "name" ) === undefined ) {
 								return true;
 							}
-							var field = $( this );
 							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
 							var value = field.val();
-						
+
 							if ( field.is(":checkbox") ) {
-								if ( field.attr( "name" ).indexOf( "[" ) != -1 ) {
+								if ( field.attr( "name" ).indexOf( "[" ) !== -1 ) {
 									value = [];
 									$( "[name='" + field.attr( "name" ) +"']:checked" ).each( function() {
 										value.push( $( this ).val() );
@@ -292,6 +292,9 @@
 				 * @return void
 				 */
 				restoreFieldsData: function( field, resque ) {
+					if ( field.attr( "name" ) === undefined ) {
+						return false;
+					}
 					if ( field.is( ":checkbox" ) && resque !== "false" && field.attr( "name" ).indexOf( "[" ) === -1 ) {
 						field.attr( "checked", "checked" );
 					} else if ( field.is( ":radio" ) ) {
