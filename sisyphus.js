@@ -111,6 +111,7 @@
 						autoRelease: true,
 						name: null,
 						onSave: function() {},
+						onBeforeRestore: function {},
 						onRestore: function() {},
 						onRelease: function() {}
 					};
@@ -257,7 +258,11 @@
 				restoreAllData: function() {
 					var self = this;
 					var restored = false;
-				
+					
+					if ( $.isFunction( self.options.onBeforeRestore ) ) {
+						self.options.onBeforeRestore.call();
+					}
+					
 					self.targets.each( function() {
 						var target = $( this );
 						var targetFormId = target.attr( "id" );
