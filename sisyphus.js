@@ -111,7 +111,7 @@
 						autoRelease: true,
 						name: null,
 						onSave: function() {},
-						onBeforeRestore: function {},
+						onBeforeRestore: function() {},
 						onRestore: function() {},
 						onRelease: function() {}
 					};
