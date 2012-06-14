@@ -144,7 +144,7 @@
 					targets = targets || {};
 					var self = this;
 					this.targets = this.targets || [];
-					this.href = this.options.name || location.hostname + location.pathname + location.search;
+					this.href = this.options.name || location.hostname + location.pathname + location.search + location.hash;
 				
 					this.targets = $.merge( this.targets, targets );
 					this.targets = $.unique( this.targets );

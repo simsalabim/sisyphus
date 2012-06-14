@@ -24,6 +24,8 @@
        h1 a {color: #000; text-decoration: none;}
        h3 { font-family: 'Salsa', cursive; font-size: 1.4em; font-weight: normal;}
        h2 { margin: 30px 0 0 0; }
+      .donate { margin: 30px 0 0 0; }
+      .gittip { margin-left: 1em; }
       .no-ie { }
       .ie { width: 50px; display:inline; }
       .todo-item { margin: 10px 0 0 0; }
@@ -141,18 +143,25 @@
           <pre class="code"> {
   customKeyPrefix: '',
   timeout: 0,
+  autoRelease: true,
+  name: null,
   onSave: function() {},
+  onBeforeRestore: function() {},
   onRestore: function() {},
   onRelease: function() {},
   excludeFields: null
  }</pre>
 
-        <p><span class="code">customKeyPrefix</span> is an addition to key in Local Storage to store form fields values</p>
+        <p><span class="code">customKeyPrefix</span> is an addition to key in Local Storage to store form fields values.</p>
         <p><span class="code">timeout</span> is an interval in seconds to perform saving data. If 0 - save every time field is updated.</p>
-        <p><span class="code">onSave</span> is function fired each time data are saved to Local Storage</p>
-        <p><span class="code">onRestore</span> is function fired if form's data are restored from Local Storage. Unlike onSaveCallback it's common for whole form, not for each field</p>
-        <p><span class="code">onRelease</span> is function fired when Local Storage is freed of previously stored form data</p>
+        <p><span class="code">onSave</span> is function fired each time data are saved to Local Storage.</p>
+        <p><span class="code">onRestore</span> is function fired if form's data are restored from Local Storage. Unlike onSaveCallback it's called fonce for entire form, not for each field.</p>
+        <p><span class="code">onBeforeRestore</span> is function fired before form data are going to be restored. As onRestore it's called once for entire form, not for each field.</p>
+        <p><span class="code">onRelease</span> is function fired when Local Storage is freed of previously stored form data.</p>
+        <p><span class="code">autoRelease</span> is flag determining if form data should be cleared from Local Storage after submit or reset. If false, it's on your own to erase Local Storage data with <span class="code">manuallyReleaseData</span> method specially provided for that purposes.</p>
         <p><span class="code">excludeFields</span> is selector to exclude specified fields from observing, ex: $( "textarea, :text" )</p>
+        <p><span class="code">name</span> is a form's part of identification. As sisyphus stores data relying on form's fields names, it determines the form itself as page URI by default, and that's ok while you don't have two or more forms with equal fields names on the same page. In that case a disambiguation will take place and you should describe each form for sisyphus with it's own identifier <span class="code">name</span>.</p>
+
         <p>For example, following code will force Sisyphus to save each text field value every 5 seconds:</p>
         <p class="code">$('form').sisyphus({timeout: 5});</p>
 
@@ -319,7 +328,7 @@
                 <li><strike>Add IE 8+ support</strike></li>
                 <li><strike>Customize data saving behaviour (on typing/by timeout), add callbacks on save/restore data</strike></li>
                 <li><strike>Add possibility to define custom fields to exclude from observing</strike></li>
-                <li>Adapt plugin to work on sigle-page #hash-navigation site</li>
+                <li><strike>Adapt plugin to work on sigle-page #hash-navigation site</strike></li>
                 <li>Adapt plugin to work with CKEditor, TinyMCE.</li>
               </ol>
             </div>
@@ -334,6 +343,22 @@
 
             <h2>Contact</h2>
             <p>Alexander Kaupanin &lt;kaupanin<img src="http://pictureimage.brinkster.net/signs/safety/thumbs/email-sign-at-symbol.png" class="email-sign" />gmail dot com&gt;</p>
+          </div>
+
+          <div class="cell">
+            <h2></h2>
+            
+
+            <div>
+              <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                <input type="hidden" name="cmd" value="_s-xclick">
+                <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+                ">
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+              </form>
+            </div>
+            <p class="gittip"><a href="https://www.gittip.com/simsalabim/">Thank me on GitTip</a></p>
           </div>
 
       </div>
