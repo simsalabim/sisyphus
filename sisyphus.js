@@ -105,7 +105,7 @@
          */
         setInitialOptions: function ( options ) {
           var defaults = {
-            excludeFields: null,
+            excludeFields: [],
             customKeyPrefix: "",
             timeout: 0,
             autoRelease: true,
