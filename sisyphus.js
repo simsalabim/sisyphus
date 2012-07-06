@@ -296,6 +296,8 @@
 					}
 					if ( field.is( ":checkbox" ) && resque !== "false" && field.attr( "name" ).indexOf( "[" ) === -1 ) {
 						field.attr( "checked", "checked" );
+					} else if( field.is( ":checkbox" ) && resque === "false" && field.attr( "name" ).indexOf( "[" ) === -1 ) {
+						field.removeAttr( "checked" );
 					} else if ( field.is( ":radio" ) ) {
 						if ( field.val() === resque ) {
 							field.attr( "checked", "checked" );
