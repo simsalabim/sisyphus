@@ -318,7 +318,7 @@
 				 */
 				bindSaveDataImmediately: function( field, prefix ) {
 					var self = this;
-					if ( $.browser.msie === null ) {
+					if ( typeof $.browser.msie === 'undefined' ) {
 						field.get(0).oninput = function() {
 							self.saveToBrowserStorage( prefix, field.val() );
 						};
