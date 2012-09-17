@@ -300,6 +300,8 @@
 						if ( field.val() === resque ) {
 							field.attr( "checked", "checked" );
 						}
+					} else if ( field.is( "select" ) ) {
+						field.find( "option[value='"+resque+"']" ).attr( "selected", "selected" );
 					} else if ( field.attr( "name" ).indexOf( "[" ) === -1 ) {
 						field.val( resque );
 					} else {
