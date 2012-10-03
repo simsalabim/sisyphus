@@ -253,7 +253,7 @@
 					var restored = false;
 
 					if ( $.isFunction( self.options.onBeforeRestore ) ) {
-						self.options.onBeforeRestore.call();
+						self.options.onBeforeRestore.call(self);
 					}
 
 					self.targets.each( function() {
