@@ -342,7 +342,7 @@
 				 */
 				saveToBrowserStorage: function( key, value, fireCallback ) {
 					// if fireCallback is undefined it should be true
-					fireCallback = fireCallback === null ? true : fireCallback;
+					fireCallback = fireCallback === undefined ? true : fireCallback;
 					this.browserStorage.set( key, value );
 					if ( fireCallback && value !== "" && $.isFunction( this.options.onSave ) ) {
 						this.options.onSave.call();
