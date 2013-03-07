@@ -13,3 +13,11 @@ Smashing Magazine article: http://coding.smashingmagazine.com/2011/12/05/sisyphu
 5. Send a pull request
 
 Author: Alexander Kaupanin
+
+Updates by Tommi Gustafsson
+
+# Changelog
+## 2013-03-07
+1. Made several new events for CKEDITOR integration: onBeforeSave, onBeforeTextSave, and "textsave.sisyphus" event for programmatic event triggering for text fields.
+2. Removed $.browser check, which did not work in jQuery 1.9.
+  - Now we will just update text twice in IE, since what I heard, oninput and onpropertychange support tests are unreliable. If you know how to detect which one to use in jQuery 1.9 and later, you are welcome to suggest a change.
