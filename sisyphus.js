@@ -5,8 +5,9 @@
  * @author Alexander Kaupanin <kaupanin@gmail.com>
  */
 
-//$.sisyphus().setOptions({timeout: 15})
 (function ($) {
+    "use strict";
+
     $.sisyphus = function () {
         return Sisyphus.getInstance();
     };
@@ -18,8 +19,9 @@
         return sisyphus;
     };
 
-    var browserStorage = {};
-    var bindingMethod = $.fn.on ? "on" : "bind";
+    var browserStorage = {},
+        bindingMethod = $.fn.on ? "on" : "bind",
+        immediateHandler = null;
 
     /**
 	 * Check if local storage or other browser storage is available
@@ -88,7 +90,7 @@
         }
     };
 
-    Sisyphus = (function () {
+    var Sisyphus = (function () {
         var params = {
             instantiated: null,
             started: null
@@ -293,8 +295,8 @@
                 /**
 				 * Restore form field data from local storage
 				 *
-				 * @param Object field		jQuery form element object
-				 * @param String resque	 previously stored fields data
+				 * @param Object field      jQuery form element object
+				 * @param String resque     previously stored fields data
 				 *
 				 * @return void
 				 */
@@ -322,7 +324,7 @@
 				 * Bind immediate saving (on typing/checking/changing) field data to local storage when user fills it
 				 *
 				 * @param Object field		jQuery form element object
-				 * @param String prefix	 prefix used as key to store data in local storage
+				 * @param String prefix     prefix used as key to store data in local storage
 				 *
 				 * @return void
 				 */
@@ -330,7 +332,7 @@
                     var self = this;
 
                     //Provide a trigger to enable text save programmatically by jQuery
-                    field[bindingMethod]("textsave.sisyphus", { prefix: prefix, field: field }, function (event) {
+                    field[bindingMethod]("textsave.sisyphus", { field: field, prefix: prefix }, function (event) {
                         if ($.isFunction(self.options.onBeforeTextSave)) {
                             self.options.onBeforeTextSave.call(event.data.field);
                         }
@@ -340,20 +342,32 @@
 
                     //For IE9+ and other browsers
                     field.get(0).oninput = function () {
-                        if ($.isFunction(self.options.onBeforeTextSave)) {
-                            self.options.onBeforeTextSave.call(self);
+                        //Determine whether to use oninput or onpropertychange on the first handler call
+                        if (!immediateHandler) {
+                            immediateHandler = "oninput";
                         }
+                        if (immediateHandler === "oninput") {
+                            if ($.isFunction(self.options.onBeforeTextSave)) {
+                                self.options.onBeforeTextSave.call(self);
+                            }
 
-                        self.saveToBrowserStorage(prefix, field.val());
+                            self.saveToBrowserStorage(prefix, field.val());
+                        }
                     };
 
                     //IE8 and below
                     field.get(0).onpropertychange = function () {
-                        if ($.isFunction(self.options.onBeforeTextSave)) {
-                            self.options.onBeforeTextSave.call(self);
+                        //Determine whether to use oninput or onpropertychange on the first handler call
+                        if (!immediateHandler) {
+                            immediateHandler = "onpropertychange";
                         }
+                        if (immediateHandler === "onpropertychange") {
+                            if ($.isFunction(self.options.onBeforeTextSave)) {
+                                self.options.onBeforeTextSave.call(self);
+                            }
 
-                        self.saveToBrowserStorage(prefix, field.val());
+                            self.saveToBrowserStorage(prefix, field.val());
+                        }
                     };
 
                 },
@@ -380,7 +394,7 @@
 				 * Bind saving field data on change
 				 *
 				 * @param Object field		jQuery form element object
-				 * @param String prefix	 prefix used as key to store data in local storage
+				 * @param String prefix     prefix used as key to store data in local storage
 				 *
 				 * @return void
 				 */
@@ -399,14 +413,13 @@
 				 */
                 saveDataByTimeout: function () {
                     var self = this;
-                    var targetForms = self.targets;
-                    setTimeout((function (targetForms) {
+                    setTimeout((function () {
                         function timeout() {
                             self.saveAllData();
                             setTimeout(timeout, self.options.timeout * 1000);
                         }
                         return timeout;
-                    })(targetForms), self.options.timeout * 1000);
+                    })(), self.options.timeout * 1000);
                 },
 
                 /**
@@ -416,7 +429,7 @@
 				 */
                 bindReleaseData: function () {
                     var self = this;
-                    self.targets.each(function (i) {
+                    self.targets.each(function () {
                         var target = $(this);
                         var fieldsToProtect = target.find(":input").not(":submit").not(":reset").not(":button").not(":file");
                         var formId = target.attr("id");
@@ -433,7 +446,7 @@
 				 */
                 manuallyReleaseData: function () {
                     var self = this;
-                    self.targets.each(function (i) {
+                    self.targets.each(function () {
                         var target = $(this);
                         var fieldsToProtect = target.find(":input").not(":submit").not(":reset").not(":button").not(":file");
                         var formId = target.attr("id");
