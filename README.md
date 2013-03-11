@@ -17,9 +17,19 @@ Author: Alexander Kaupanin
 
 Updates by Tommi Gustafsson
 
+# jQuery Support
+Sisyphus supports jQuery 1.4.3 and later.
+
+# Browser Support
+Sisyphus works on browsers that support HTML5 local storage: IE8+, Firefox, Chrome, Opera 10.5+, and Safari 4.0+.
+
+You can also use [jStorage](https://github.com/andris9/jStorage) to replicate localStorage functionality in older browsers and mobile browser without local storage support.
+
 # Changelog
+
 ## 2013-03-11
 1. Solution to the oninput and onpropertychange detection problem
+
 ## 2013-03-07
 1. Made several new events for CKEDITOR integration: onBeforeSave, onBeforeTextSave, and "textsave.sisyphus" event for programmatic event triggering for text fields.
 2. Removed $.browser check, which did not work in jQuery 1.9.
