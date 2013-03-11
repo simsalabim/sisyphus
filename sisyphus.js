@@ -7,6 +7,7 @@
  */
 
 ( function( $ ) {
+	"use strict";
 
 	$.fn.sisyphus = function( options ) {
 		var identifier = $.map( this, function( obj, i ) {
@@ -18,8 +19,9 @@
 		return sisyphus;
 	};
 
-	var browserStorage = {};
-	var bindingMethod = $.fn.on ? "on" : "bind";
+	var browserStorage = {},
+		bindingMethod = $.fn.on ? "on" : "bind",
+		immediateHandler = null;
 
 	/**
 	 * Check if local storage or other browser storage is available
@@ -88,7 +90,7 @@
 		}
 	};
 
-	Sisyphus = ( function() {
+	var Sisyphus = ( function() {
 		var params = {
 			instantiated: [],
 			started: []
@@ -333,7 +335,7 @@
 					var self = this;
 
 					// Provide a trigger to enable text save programmatically by jQuery
-					field[bindingMethod]( "textsave.sisyphus", { prefix: prefix, field: field }, function ( event ) {
+					field[bindingMethod]( "textsave.sisyphus", { field: field, prefix: prefix }, function ( event ) {
 						if ( $.isFunction( self.options.onBeforeTextSave ) ) {
 							self.options.onBeforeTextSave.call( event.data.field );
 						}
@@ -342,18 +344,30 @@
 					});
 
 					if ( 'onpropertychange' in field ) {
-						field.get(0).onpropertychange = function() {
-							if ( $.isFunction( self.options.onBeforeTextSave ) ) {
-								self.options.onBeforeTextSave.call( self );
+						field.get( 0 ).onpropertychange = function() {
+							// Determine whether to use oninput or onpropertychange on the first handler call
+							if ( !immediateHandler ) {
+								immediateHandler = "onpropertychange";
 							}
-							self.saveToBrowserStorage( prefix, field.val() );
+							if ( immediateHandler === "onpropertychange" ) {
+								if ( $.isFunction( self.options.onBeforeTextSave ) ) {
+									self.options.onBeforeTextSave.call( self );
+								}
+								self.saveToBrowserStorage( prefix, field.val() );
+							}
 						};
 					} else {
-						field.get(0).oninput = function() {
-							if ( $.isFunction( self.options.onBeforeTextSave ) ) {
-								self.options.onBeforeTextSave.call( self );
+						field.get( 0 ).oninput = function() {
+							// Determine whether to use oninput or onpropertychange on the first handler call
+							if ( !immediateHandler ) {
+								immediateHandler = "oninput";
 							}
-							self.saveToBrowserStorage( prefix, field.val() );
+							if ( immediateHandler === "oninput" ) {
+								if ( $.isFunction( self.options.onBeforeTextSave ) ) {
+									self.options.onBeforeTextSave.call( self );
+								}
+								self.saveToBrowserStorage( prefix, field.val() );
+							}
 						};
 					}
 				},
