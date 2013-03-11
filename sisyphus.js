@@ -265,7 +265,7 @@
                     if ($.isFunction(self.options.onBeforeRestore)) {
                         self.options.onBeforeRestore.call(self);
                     }
-
+                    
                     self.targets.each(function () {
                         var target = $(this);
                         var targetFormId = target.attr("id");
