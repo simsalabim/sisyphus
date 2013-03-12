@@ -3,6 +3,8 @@ Plugin developed to save html forms data to LocalStorage to restore them after b
 
 Description and sample are available at http://simsalabim.github.com/sisyphus/
 
+CKEDITOR and TinyMCE integration demos are available in the *demo* folder of the repository.
+
 Smashing Magazine article: http://coding.smashingmagazine.com/2011/12/05/sisyphus-js-client-side-drafts-and-more/
 
 # How to contribute
@@ -10,7 +12,7 @@ Smashing Magazine article: http://coding.smashingmagazine.com/2011/12/05/sisyphu
 2. Make your changes
 3. Check that your code style matches [jQuery Core Style Guidelines](http://contribute.jquery.org/style-guide/js/)
 4. Use [uglifyjs](http://marijnhaverbeke.nl/uglifyjs) to build minified version of Sisyphus 
-  - also Visual Studio with Web Essentials will do this for you
+  - Visual Studio with Web Essentials will also do this for you
 5. Send a pull request
 
 Author: Alexander Kaupanin
@@ -23,9 +25,12 @@ Sisyphus supports jQuery 1.4.3 and later.
 # Browser Support
 Sisyphus works on browsers that support HTML5 local storage: IE8+, Firefox, Chrome, Opera 10.5+, and Safari 4.0+.
 
-You can also use [jStorage](https://github.com/andris9/jStorage) to replicate localStorage functionality in older browsers and mobile browser without local storage support.
+You can also use [jStorage](https://github.com/andris9/jStorage) to replicate localStorage functionality in browsers without local storage support.
 
 # Changelog
+
+## 2013-03-12
+1. Added TinyMCE integration demo
 
 ## 2013-03-11
 1. Solution to the oninput and onpropertychange detection problem
