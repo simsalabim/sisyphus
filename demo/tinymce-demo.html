@@ -19,7 +19,6 @@
         <form id="form1" method="post">
             <h3>TinyMCE 1:</h3>
 
-            <!-- We need here both ID and name -->
             <textarea id="textarea1" name="textarea1">
                 This is initial text.
             </textarea>
@@ -27,7 +26,6 @@
 
             <h3>TinyMCE 2:</h3>
 
-            <!-- We need here both ID and name -->
             <textarea id="textarea2" name="textarea2">
                 This is initial text 2.
             </textarea>
@@ -39,6 +37,8 @@
     </fieldset>
     <script>
         $(document).ready(function () {
+
+            //1. Initialize TinyMCEs
             tinyMCE.init({
                 mode: "textareas",
                 setup: function (ed) {
@@ -51,8 +51,6 @@
                     });
                 }
             });
-
-            //Initialize Sisyphus for CKEDITOR
 
             //2. Initialize Sisyphus with handlers
             $('#form1').sisyphus({
@@ -79,7 +77,7 @@
                     tinymce.activeEditor.save();
                 },
 
-                //2.3 Set onRestore to update CKEDITOR instances from textareas
+                //2.3 Set onRestore to update TinyMCE editors from textareas
                 onRestore: function () {
                     //For testing
                     if (console) {
