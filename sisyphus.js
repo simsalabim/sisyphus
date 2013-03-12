@@ -320,12 +320,12 @@
 				 */
 				bindSaveDataImmediately: function( field, prefix ) {
 					var self = this;
-					if ( typeof $.browser.msie === 'undefined' ) {
-						field.get(0).oninput = function() {
+					if ( 'onpropertychange' in field ) {
+						field.get(0).onpropertychange = function() {
 							self.saveToBrowserStorage( prefix, field.val() );
 						};
 					} else {
-						field.get(0).onpropertychange = function() {
+						field.get(0).oninput = function() {
 							self.saveToBrowserStorage( prefix, field.val() );
 						};
 					}
