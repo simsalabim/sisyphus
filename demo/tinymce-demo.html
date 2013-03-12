@@ -2,21 +2,22 @@
 <html>
 <head lang="en">
     <meta charset="utf-8">
-    <title>Sisyphus + CKEDITOR Demo</title>
+    <title>Sisyphus + TinyMCE Demo</title>
     <script src="../vendor/jquery-1.9.1.min.js"></script>
-    <script src="../vendor/ckeditor/ckeditor.js"></script>
+    <script src="../vendor/tiny_mce/tiny_mce.js"></script>
     <script src="../sisyphus.js"></script>
 </head>
 <body>
-    <h1>Sysiphus + CKEDITOR Integration demo</h1>
-    <section>Using Sisyphus, jQuery 1.9.1, and CKEDITOR 4.0.2.</section>
-    <p>1. Try to write something to CKEDITORs and then REFRESH the page (F5). The data should be safe and restored on refresh.</p>
-    <p>2. Try to write something to CKEDITORs and then submit the form. It will clear data from the storage, and only initial texts will show up.</p>
+    <h1>Sysiphus + TinyMCE Integration demo</h1>
+    <section>Using Sisyphus, jQuery 1.9.1, and TinyMCE 3.5.8.</section>
+    <p>1. Try to write something to TinyMCE editors and then REFRESH the page (F5). The data should be safe and restored on refresh.</p>
+    <p>2. Try to write something to TinyMCE editors and then submit the form. It will clear data from the storage, and only initial texts will show up.</p>
     <p>Please View Source for implementation details.</p>
+
     <fieldset>
-        <legend>CKEDITOR Form</legend>
+        <legend>TinyMCE Form</legend>
         <form id="form1" method="post">
-            <h3>CKEDITOR 1</h3>
+            <h3>TinyMCE 1:</h3>
 
             <!-- We need here both ID and name -->
             <textarea id="textarea1" name="textarea1">
@@ -24,7 +25,7 @@
             </textarea>
 
 
-            <h3>CKEDITOR 2</h3>
+            <h3>TinyMCE 2:</h3>
 
             <!-- We need here both ID and name -->
             <textarea id="textarea2" name="textarea2">
@@ -36,41 +37,35 @@
             </div>
         </form>
     </fieldset>
-
     <script>
         $(document).ready(function () {
-            CKEDITOR.replace("textarea1");
-            CKEDITOR.replace("textarea2");
-
-            //Initialize Sisyphus for CKEDITOR
-
-            //1. Bind KeyUp event to textsave.sisyphus jQuery event
-            for (var i in CKEDITOR.instances) {
-                CKEDITOR.instances[i].on('contentDom', function () {
-                    var ckElement = this;
-                    this.document.on('keyup', function (event) {
+            tinyMCE.init({
+                mode: "textareas",
+                setup: function (ed) {
+                    ed.onKeyUp.add(function (ed, e) {
                         //For testing
                         if (console) {
-                            console.log("KeyUp");
+                            console.log('Key up event: ' + e.keyCode);
                         }
-
-                        $(ckElement.element.$).trigger("textsave.sisyphus");
+                        $(ed.getElement()).trigger("textsave.sisyphus");
                     });
-                });
-            }
+                }
+            });
+
+            //Initialize Sisyphus for CKEDITOR
 
             //2. Initialize Sisyphus with handlers
             $('#form1').sisyphus({
 
-                //2.1 Set onBeforeSave to update all textareas from CKEDITOR instances
+                //2.1 Set onBeforeSave to update all textareas from TinyMCE editors
                 onBeforeSave: function () {
                     //For testing
                     if (console) {
                         console.log("onBeforeSave");
                     }
 
-                    for (var edid in CKEDITOR.instances) {
-                        CKEDITOR.instances[edid].updateElement();
+                    for (var edid in tinymce.editors) {
+                        tinymce.editors[edid].save();
                     }
                 },
 
@@ -81,11 +76,7 @@
                         console.log("onBeforeTextSave");
                     }
 
-                    //Update 
-                    var ed = CKEDITOR.instances[$(this).attr("name")];
-                    if (ed) {
-                        ed.updateElement();
-                    }
+                    tinymce.activeEditor.save();
                 },
 
                 //2.3 Set onRestore to update CKEDITOR instances from textareas
@@ -95,10 +86,8 @@
                         console.log("onRestore");
                     }
 
-                    for (var edid in CKEDITOR.instances) {
-                        var instance = CKEDITOR.instances[edid];
-                        var value = instance.element.getValue();
-                        instance.setData(value);
+                    for (var edid in tinymce.editors) {
+                        tinymce.editors[edid].load();
                     }
                 }
             });
