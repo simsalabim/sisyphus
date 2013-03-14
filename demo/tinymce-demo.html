@@ -42,10 +42,21 @@
             tinyMCE.init({
                 mode: "textareas",
                 setup: function (ed) {
+
+                    //1.1. Save contents after each key up event
                     ed.onKeyUp.add(function (ed, e) {
                         //For testing
                         if (console) {
-                            console.log('Key up event: ' + e.keyCode);
+                            console.log('onKeyUp: ' + e.keyCode);
+                        }
+                        $(ed.getElement()).trigger("textsave.sisyphus");
+                    });
+
+                    //1.2 onDeactivate event (= tinyMCE "blur": useful after paste with mouse etc.)
+                    ed.onDeactivate.add(function (ed, e) {
+                        //For testing
+                        if (console) {
+                            console.log('onDeactivate');
                         }
                         $(ed.getElement()).trigger("textsave.sisyphus");
                     });
@@ -74,7 +85,10 @@
                         console.log("onBeforeTextSave");
                     }
 
-                    tinymce.activeEditor.save();
+                    var ed = tinymce.editors[$(this).attr("name")];
+                    if (ed) {
+                        ed.save();
+                    }
                 },
 
                 //2.3 Set onRestore to update TinyMCE editors from textareas
