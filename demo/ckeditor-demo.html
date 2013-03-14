@@ -43,9 +43,11 @@
             CKEDITOR.replace("textarea2");
 
             //Initialize Sisyphus for CKEDITOR
-
-            //1. Bind KeyUp event to textsave.sisyphus jQuery event
+            
+            //1. Bind events to CKEDITOR instances
             for (var i in CKEDITOR.instances) {
+
+                //1.1 Bind KeyUp event to textsave.sisyphus jQuery event
                 CKEDITOR.instances[i].on('contentDom', function () {
                     var ckElement = this;
                     this.document.on('keyup', function (event) {
@@ -56,6 +58,15 @@
 
                         $(ckElement.element.$).trigger("textsave.sisyphus");
                     });
+                });
+
+                //1.2 Bind Blur event to textsave.sisyphus jQuery event (useful after paste etc., otherwise can be omitted)
+                CKEDITOR.instances[i].on('blur', function() {
+                    //For testing
+                    if (console) {
+                        console.log("Blur");
+                    }
+                    $(this.element.$).trigger("textsave.sisyphus");
                 });
             }
 
