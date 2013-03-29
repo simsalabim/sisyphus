@@ -251,10 +251,13 @@
 				restoreAllData: function() {
 					var self = this;
 					var restored = false;
+					var performRestore = true;
 
 					if ( $.isFunction( self.options.onBeforeRestore ) ) {
-						self.options.onBeforeRestore.call(self);
+						performRestore = self.options.onBeforeRestore.call(self);
 					}
+
+					if(!performRestore)	return;
 
 					self.targets.each( function() {
 						var target = $( this );
