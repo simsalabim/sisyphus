@@ -188,6 +188,9 @@
 							if ( field.is( ":text" ) || field.is( "textarea" ) ) {
 								if ( ! self.options.timeout ) {
 									self.bindSaveDataImmediately( field, prefix );
+
+									// A plugin may trigger change on a field
+									self.bindSaveDataOnChange( field, prefix );
 								}
 							} else {
 								self.bindSaveDataOnChange( field, prefix );
