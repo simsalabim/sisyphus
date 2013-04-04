@@ -3,18 +3,18 @@
  * and other disasters.
  *
  * @author Alexander Kaupanin <kaupanin@gmail.com>
+ * @version 1.1
  */
 
-//$.sisyphus().setOptions({timeout: 15})
 ( function( $ ) {
-	$.sisyphus = function() {
-		return Sisyphus.getInstance();
-	};
 
 	$.fn.sisyphus = function( options ) {
-		var sisyphus = Sisyphus.getInstance();
-		sisyphus.setOptions( options );
-		sisyphus.protect( this );
+		var identifier = $.map( this, function( obj, i ) {
+			return $( obj ).attr( "id" ) + $( obj ).attr( "name" )
+		}).join();
+
+		var sisyphus = Sisyphus.getInstance( identifier );
+		sisyphus.protect( this, options );
 		return sisyphus;
 	};
 
@@ -50,7 +50,7 @@
 		} else {
 			try {
 				localStorage.setItem( key, value + "" );
-			} catch (e) {
+			} catch ( e ) {
 				//QUOTA_EXCEEDED_ERR
 			}
 		}
@@ -89,13 +89,21 @@
 
 	Sisyphus = ( function() {
 		var params = {
-			instantiated: null,
-			started: null
+			instantiated: [],
+			started: []
 		};
 
-		function init () {
+		function init ( identifier ) {
 
 			return {
+				setInstanceIdentifier: function( identifier ) {
+					this.identifier = identifier
+				},
+
+				getInstanceIdentifier: function() {
+					return this.identifier;
+				},
+
 				/**
 				 * Set plugin initial options
 				 *
@@ -107,9 +115,9 @@
 					var defaults = {
 						excludeFields: [],
 						customKeyPrefix: "",
+						locationBased: false,
 						timeout: 0,
 						autoRelease: true,
-						name: null,
 						onSave: function() {},
 						onBeforeRestore: function() {},
 						onRestore: function() {},
@@ -139,12 +147,12 @@
 				 *
 				 * @return void
 				 */
-				protect: function( targets ) {
+				protect: function( targets, options ) {
+					this.setOptions( options );
 					targets = targets || {};
 					var self = this;
 					this.targets = this.targets || [];
-					this.href = this.options.name || location.hostname + location.pathname + location.search + location.hash;
-
+					this.href = location.hostname + location.pathname + location.search + location.hash;
 					this.targets = $.merge( this.targets, targets );
 					this.targets = $.unique( this.targets );
 					this.targets = $( this.targets );
@@ -152,13 +160,18 @@
 						return false;
 					}
 
-					self.restoreAllData();
+					var callback_result = self.options.onBeforeRestore.call( self );
+					if ( callback_result === undefined || callback_result ) {
+						self.restoreAllData();
+					}
+
 					if ( this.options.autoRelease ) {
 						self.bindReleaseData();
 					}
-					if ( ! params.started ) {
+
+					if ( ! params.started[ this.getInstanceIdentifier() ] ) {
 						self.bindSaveData();
-						params.started = true;
+						params.started[ this.getInstanceIdentifier() ] = true;
 					}
 				},
 
@@ -175,39 +188,37 @@
 					}
 
 					self.targets.each( function() {
-						var targetFormId = $( this ).attr( "id" );
-						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" );
-
+						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
+						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" );
 						fieldsToProtect.each( function() {
 							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
 								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
 								return true;
 							}
 							var field = $( this );
-							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
+							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
 							if ( field.is( ":text" ) || field.is( "textarea" ) ) {
 								if ( ! self.options.timeout ) {
 									self.bindSaveDataImmediately( field, prefix );
 								}
-							} else {
-								self.bindSaveDataOnChange( field, prefix );
 							}
+							self.bindSaveDataOnChange( field, prefix );
 						} );
 					} );
 				},
 
 				/**
 				 * Save all protected forms data to Local Storage.
-				 * Common method, necessary to not lead astray user firing 'data are saved' when select/checkbox/radio
-				 * is changed and saved, while textfield data are saved only by timeout
+				 * Common method, necessary to not lead astray user firing 'data is saved' when select/checkbox/radio
+				 * is changed and saved, while textfield data is saved only by timeout
 				 *
 				 * @return void
 				 */
 				saveAllData: function() {
 					var self = this;
 					self.targets.each( function() {
-						var targetFormId = $( this ).attr( "id" );
-						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" );
+						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
+						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file").not( ":password" );
 
 						fieldsToProtect.each( function() {
 							var field = $( this );
@@ -215,7 +226,7 @@
 								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
 								return true;
 							}
-							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
+							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
 							var value = field.val();
 
 							if ( field.is(":checkbox") ) {
@@ -238,9 +249,7 @@
 							}
 						} );
 					} );
-					if ( $.isFunction( self.options.onSave ) ) {
-						self.options.onSave.call();
-					}
+					self.options.onSave.call();
 				},
 
 				/**
@@ -252,23 +261,18 @@
 					var self = this;
 					var restored = false;
 
-					if ( $.isFunction( self.options.onBeforeRestore ) ) {
-						self.options.onBeforeRestore.call(self);
-					}
-
 					self.targets.each( function() {
 						var target = $( this );
-						var targetFormId = target.attr( "id" );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" );
+						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
+						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" );
 
 						fieldsToProtect.each( function() {
-
 							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
 								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
 								return true;
 							}
 							var field = $( this );
-							var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
+							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
 							var resque = self.browserStorage.get( prefix );
 							if ( resque ) {
 								self.restoreFieldsData( field, resque );
@@ -277,7 +281,7 @@
 						} );
 					} );
 
-					if ( restored && $.isFunction( self.options.onRestore ) ) {
+					if ( restored ) {
 						self.options.onRestore.call();
 					}
 				},
@@ -344,7 +348,7 @@
 					// if fireCallback is undefined it should be true
 					fireCallback = fireCallback === undefined ? true : fireCallback;
 					this.browserStorage.set( key, value );
-					if ( fireCallback && value !== "" && $.isFunction( this.options.onSave ) ) {
+					if ( fireCallback && value !== "" ) {
 						this.options.onSave.call();
 					}
 				},
@@ -390,10 +394,10 @@
 					var self = this;
 					self.targets.each( function( i ) {
 						var target = $( this );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" );
-						var formId = target.attr( "id" );
+						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" );
+						var formIdAndName = target.attr( "id" ) + target.attr( "name" );
 						$( this ).bind( "submit reset", function() {
-							self.releaseData( formId, fieldsToProtect );
+							self.releaseData( formIdAndName, fieldsToProtect );
 						} );
 					} );
 				},
@@ -407,21 +411,21 @@
 					var self = this;
 					self.targets.each( function( i ) {
 						var target = $( this );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" );
-						var formId = target.attr( "id" );
-						self.releaseData( formId, fieldsToProtect );
+						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" );
+						var formIdAndName = target.attr( "id" ) + target.attr( "name" );
+						self.releaseData( formIdAndName, fieldsToProtect );
 					} );
 				},
 
 				/**
 				 * Bind release form fields data from local storage on submit/resett form
 				 *
-				 * @param String targetFormId
+				 * @param String targetFormIdAndName	a form identifier consists of its id and name glued
 				 * @param Object fieldsToProtect		jQuery object contains form fields to protect
 				 *
 				 * @return void
 				 */
-				releaseData: function( targetFormId, fieldsToProtect ) {
+				releaseData: function( targetFormIdAndName, fieldsToProtect ) {
 					var released = false;
 					var self = this;
 					fieldsToProtect.each( function() {
@@ -430,12 +434,12 @@
 							return true;
 						}
 						var field = $( this );
-						var prefix = self.href + targetFormId + field.attr( "name" ) + self.options.customKeyPrefix;
+						var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
 						self.browserStorage.remove( prefix );
 						released = true;
 					} );
 
-					if ( released && $.isFunction( self.options.onRelease ) ) {
+					if ( released ) {
 						self.options.onRelease.call();
 					}
 				}
@@ -444,12 +448,16 @@
 		}
 
 		return {
-			getInstance: function() {
-				if ( ! params.instantiated ) {
-					params.instantiated = init();
-					params.instantiated.setInitialOptions();
+			getInstance: function( identifier ) {
+				if ( ! params.instantiated[ identifier ] ) {
+					params.instantiated[ identifier ] = init();
+					params.instantiated[ identifier ].setInstanceIdentifier( identifier );
+					params.instantiated[ identifier ].setInitialOptions();
 				}
-				return params.instantiated;
+				if ( identifier ) {
+					return params.instantiated[ identifier ];
+				}
+				return params.instantiated[ identifier ];
 			},
 
 			free: function() {
