@@ -280,7 +280,7 @@
                             var field = $(this);
                             var prefix = self.href + targetFormId + field.attr("name") + self.options.customKeyPrefix;
                             var resque = self.browserStorage.get(prefix);
-                            if (resque || resque === "") {
+                            if (resque !== null) {
                                 self.restoreFieldsData(field, resque);
                                 restored = true;
                             }
