@@ -249,7 +249,7 @@
 							}
 						} );
 					} );
-					self.options.onSave.call();
+					self.options.onSave.call( self );
 				},
 
 				/**
@@ -282,7 +282,7 @@
 					} );
 
 					if ( restored ) {
-						self.options.onRestore.call();
+						self.options.onRestore.call( self );
 					}
 				},
 
@@ -349,7 +349,7 @@
 					fireCallback = fireCallback === undefined ? true : fireCallback;
 					this.browserStorage.set( key, value );
 					if ( fireCallback && value !== "" ) {
-						this.options.onSave.call();
+						this.options.onSave.call( this );
 					}
 				},
 
@@ -440,7 +440,7 @@
 					} );
 
 					if ( released ) {
-						self.options.onRelease.call();
+						self.options.onRelease.call( self );
 					}
 				}
 
