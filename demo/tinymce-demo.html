@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <title>Sisyphus + TinyMCE Demo</title>
+    <script src="../vendor/jquery-1.9.1.min.js"></script>
+    <script src="../vendor/tiny_mce/tiny_mce.js"></script>
+    <script src="../sisyphus.js"></script>
+</head>
+<body>
+    <h1>Sisyphus + TinyMCE Integration demo</h1>
+    <section>Using Sisyphus, jQuery 1.9.1, and TinyMCE 3.5.8.</section>
+    <p>1. Try to write something to TinyMCE editors and then REFRESH the page (F5). The data should be safe and restored on refresh.</p>
+    <p>2. Try to write something to TinyMCE editors and then submit the form. It will clear data from the storage, and only initial texts will show up.</p>
+    <p>Please View Source for implementation details.</p>
+
+    <fieldset>
+        <legend>TinyMCE Form</legend>
+        <form id="form1" method="post">
+            <h3>TinyMCE 1:</h3>
+
+            <textarea id="textarea1" name="textarea1">
+                This is initial text.
+            </textarea>
+
+
+            <h3>TinyMCE 2:</h3>
+
+            <textarea id="textarea2" name="textarea2">
+                This is initial text 2.
+            </textarea>
+
+            <div style="margin-top:20px;">
+                <input type="submit" value="Submit" /> <i>Submission will release the stored data.</i>
+            </div>
+        </form>
+    </fieldset>
+    <script>
+        $(document).ready(function () {
+
+            //1. Initialize TinyMCEs
+            tinyMCE.init({
+                mode: "textareas",
+                setup: function (ed) {
+
+                    //1.1. Save contents after each key up event
+                    ed.onKeyUp.add(function (ed, e) {
+                        //For testing
+                        if (console) {
+                            console.log('onKeyUp: ' + e.keyCode);
+                        }
+                        $(ed.getElement()).trigger("textsave.sisyphus");
+                    });
+
+                    //1.2 onDeactivate event (= tinyMCE "blur": useful after paste with mouse etc.)
+                    ed.onDeactivate.add(function (ed, e) {
+                        //For testing
+                        if (console) {
+                            console.log('onDeactivate');
+                        }
+                        $(ed.getElement()).trigger("textsave.sisyphus");
+                    });
+                }
+            });
+
+            //2. Initialize Sisyphus with handlers
+            $('#form1').sisyphus({
+
+                //2.1 Set onBeforeSave to update all textareas from TinyMCE editors
+                onBeforeSave: function () {
+                    //For testing
+                    if (console) {
+                        console.log("onBeforeSave");
+                    }
+
+                    for (var edid in tinymce.editors) {
+                        tinymce.editors[edid].save();
+                    }
+                },
+
+                //2.2 Set onBeforeTextSave, which is triggered when text is changed in textareas or input[type=text] elements
+                onBeforeTextSave: function () {
+                    //For testing
+                    if (console) {
+                        console.log("onBeforeTextSave");
+                    }
+
+                    var ed = tinymce.editors[$(this).attr("name")];
+                    if (ed) {
+                        ed.save();
+                    }
+                },
+
+                //2.3 Set onRestore to update TinyMCE editors from textareas
+                onRestore: function () {
+                    //For testing
+                    if (console) {
+                        console.log("onRestore");
+                    }
+
+                    for (var edid in tinymce.editors) {
+                        tinymce.editors[edid].load();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

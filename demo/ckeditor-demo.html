@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <title>Sisyphus + CKEDITOR Demo</title>
+    <script src="../vendor/jquery-1.9.1.min.js"></script>
+    <script src="../vendor/ckeditor/ckeditor.js"></script>
+    <script src="../sisyphus.js"></script>
+</head>
+<body>
+    <h1>Sisyphus + CKEDITOR Integration demo</h1>
+    <section>Using Sisyphus, jQuery 1.9.1, and CKEDITOR 4.0.2.</section>
+    <p>1. Try to write something to CKEDITORs and then REFRESH the page (F5). The data should be safe and restored on refresh.</p>
+    <p>2. Try to write something to CKEDITORs and then submit the form. It will clear data from the storage, and only initial texts will show up.</p>
+    <p>Please View Source for implementation details.</p>
+    <fieldset>
+        <legend>CKEDITOR Form</legend>
+        <form id="form1" method="post">
+            <h3>CKEDITOR 1</h3>
+
+            <!-- We need here both ID and name -->
+            <textarea id="textarea1" name="textarea1">
+                This is initial text.
+            </textarea>
+
+
+            <h3>CKEDITOR 2</h3>
+
+            <!-- We need here both ID and name -->
+            <textarea id="textarea2" name="textarea2">
+                This is initial text 2.
+            </textarea>
+
+            <div style="margin-top:20px;">
+                <input type="submit" value="Submit" /> <i>Submission will release the stored data.</i>
+            </div>
+        </form>
+    </fieldset>
+
+    <script>
+        $(document).ready(function () {
+            CKEDITOR.replace("textarea1");
+            CKEDITOR.replace("textarea2");
+
+            //Initialize Sisyphus for CKEDITOR
+            
+            //1. Bind events to CKEDITOR instances
+            for (var i in CKEDITOR.instances) {
+
+                //1.1 Bind KeyUp event to textsave.sisyphus jQuery event
+                CKEDITOR.instances[i].on('contentDom', function () {
+                    var ckElement = this;
+                    this.document.on('keyup', function (event) {
+                        //For testing
+                        if (console) {
+                            console.log("KeyUp");
+                        }
+
+                        $(ckElement.element.$).trigger("textsave.sisyphus");
+                    });
+                });
+
+                //1.2 Bind Blur event to textsave.sisyphus jQuery event (useful after paste etc., otherwise can be omitted)
+                CKEDITOR.instances[i].on('blur', function() {
+                    //For testing
+                    if (console) {
+                        console.log("Blur");
+                    }
+                    $(this.element.$).trigger("textsave.sisyphus");
+                });
+            }
+
+            //2. Initialize Sisyphus with handlers
+            $('#form1').sisyphus({
+
+                //2.1 Set onBeforeSave to update all textareas from CKEDITOR instances
+                onBeforeSave: function () {
+                    //For testing
+                    if (console) {
+                        console.log("onBeforeSave");
+                    }
+
+                    for (var edid in CKEDITOR.instances) {
+                        CKEDITOR.instances[edid].updateElement();
+                    }
+                },
+
+                //2.2 Set onBeforeTextSave, which is triggered when text is changed in textareas or input[type=text] elements
+                onBeforeTextSave: function () {
+                    //For testing
+                    if (console) {
+                        console.log("onBeforeTextSave");
+                    }
+
+                    //Update 
+                    var ed = CKEDITOR.instances[$(this).attr("name")];
+                    if (ed) {
+                        ed.updateElement();
+                    }
+                },
+
+                //2.3 Set onRestore to update CKEDITOR instances from textareas
+                onRestore: function () {
+                    //For testing
+                    if (console) {
+                        console.log("onRestore");
+                    }
+
+                    for (var edid in CKEDITOR.instances) {
+                        var instance = CKEDITOR.instances[edid];
+                        var value = instance.element.getValue();
+                        instance.setData(value);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

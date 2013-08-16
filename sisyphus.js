@@ -7,6 +7,7 @@
  */
 
 ( function( $ ) {
+	"use strict";
 
 	$.fn.sisyphus = function( options ) {
 		var identifier = $.map( this, function( obj, i ) {
@@ -18,7 +19,9 @@
 		return sisyphus;
 	};
 
-	var browserStorage = {};
+	var browserStorage = {},
+		bindingMethod = $.fn.on ? "on" : "bind",
+		immediateHandler = null;
 
 	/**
 	 * Check if local storage or other browser storage is available
@@ -87,7 +90,7 @@
 		}
 	};
 
-	Sisyphus = ( function() {
+	var Sisyphus = ( function() {
 		var params = {
 			instantiated: [],
 			started: []
@@ -118,6 +121,8 @@
 						locationBased: false,
 						timeout: 0,
 						autoRelease: true,
+						onBeforeTextSave: function () {},
+						onBeforeSave: function () {},
 						onSave: function() {},
 						onBeforeRestore: function() {},
 						onRestore: function() {},
@@ -216,6 +221,10 @@
 				 */
 				saveAllData: function() {
 					var self = this;
+					if ( $.isFunction( self.options.onBeforeSave ) ) {
+						self.options.onBeforeSave.call( self );
+					}
+
 					self.targets.each( function() {
 						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
 						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file").not( ":password" );
@@ -274,7 +283,7 @@
 							var field = $( this );
 							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
 							var resque = self.browserStorage.get( prefix );
-							if ( resque ) {
+							if ( resque !== null) {
 								self.restoreFieldsData( field, resque );
 								restored = true;
 							}
@@ -324,13 +333,41 @@
 				 */
 				bindSaveDataImmediately: function( field, prefix ) {
 					var self = this;
+
+					// Provide a trigger to enable text save programmatically by jQuery
+					field[bindingMethod]( "textsave.sisyphus", { field: field, prefix: prefix }, function ( event ) {
+						if ( $.isFunction( self.options.onBeforeTextSave ) ) {
+							self.options.onBeforeTextSave.call( event.data.field );
+						}
+
+						self.saveToBrowserStorage( event.data.prefix, event.data.field.val() );
+					});
+
 					if ( 'onpropertychange' in field ) {
-						field.get(0).onpropertychange = function() {
-							self.saveToBrowserStorage( prefix, field.val() );
+						field.get( 0 ).onpropertychange = function() {
+							// Determine whether to use oninput or onpropertychange on the first handler call
+							if ( !immediateHandler ) {
+								immediateHandler = "onpropertychange";
+							}
+							if ( immediateHandler === "onpropertychange" ) {
+								if ( $.isFunction( self.options.onBeforeTextSave ) ) {
+									self.options.onBeforeTextSave.call( self );
+								}
+								self.saveToBrowserStorage( prefix, field.val() );
+							}
 						};
 					} else {
-						field.get(0).oninput = function() {
-							self.saveToBrowserStorage( prefix, field.val() );
+						field.get( 0 ).oninput = function() {
+							// Determine whether to use oninput or onpropertychange on the first handler call
+							if ( !immediateHandler ) {
+								immediateHandler = "oninput";
+							}
+							if ( immediateHandler === "oninput" ) {
+								if ( $.isFunction( self.options.onBeforeTextSave ) ) {
+									self.options.onBeforeTextSave.call( self );
+								}
+								self.saveToBrowserStorage( prefix, field.val() );
+							}
 						};
 					}
 				},
