@@ -19,6 +19,7 @@
 	};
 
 	var browserStorage = {};
+	var bindingMethod = $.fn.on ? "on" : "bind";
 
 	/**
 	 * Check if local storage or other browser storage is available
@@ -118,6 +119,8 @@
 						locationBased: false,
 						timeout: 0,
 						autoRelease: true,
+						onBeforeTextSave: function () {},
+						onBeforeSave: function () {},
 						onSave: function() {},
 						onBeforeRestore: function() {},
 						onRestore: function() {},
@@ -216,6 +219,10 @@
 				 */
 				saveAllData: function() {
 					var self = this;
+					if ( $.isFunction( self.options.onBeforeSave ) ) {
+						self.options.onBeforeSave.call( self );
+					}
+
 					self.targets.each( function() {
 						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
 						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file").not( ":password" );
@@ -324,12 +331,28 @@
 				 */
 				bindSaveDataImmediately: function( field, prefix ) {
 					var self = this;
+
+					// Provide a trigger to enable text save programmatically by jQuery
+					field[bindingMethod]( "textsave.sisyphus", { prefix: prefix, field: field }, function ( event ) {
+						if ( $.isFunction( self.options.onBeforeTextSave ) ) {
+							self.options.onBeforeTextSave.call( event.data.field );
+						}
+
+						self.saveToBrowserStorage( event.data.prefix, event.data.field.val() );
+					});
+
 					if ( 'onpropertychange' in field ) {
 						field.get(0).onpropertychange = function() {
+							if ( $.isFunction( self.options.onBeforeTextSave ) ) {
+								self.options.onBeforeTextSave.call( self );
+							}
 							self.saveToBrowserStorage( prefix, field.val() );
 						};
 					} else {
 						field.get(0).oninput = function() {
+							if ( $.isFunction( self.options.onBeforeTextSave ) ) {
+								self.options.onBeforeTextSave.call( self );
+							}
 							self.saveToBrowserStorage( prefix, field.val() );
 						};
 					}
