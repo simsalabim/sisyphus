@@ -222,7 +222,7 @@
 								return true;
 							}
 							var field = $( this );
-							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
+							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr("id") + field.attr( "name" ) + self.options.customKeyPrefix;
 							if ( field.is( ":text" ) || field.is( "textarea" ) ) {
 								if ( ! self.options.timeout ) {
 									self.bindSaveDataImmediately( field, prefix );
@@ -252,7 +252,7 @@
 								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
 								return true;
 							}
-							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
+							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr("id") + field.attr( "name" ) + self.options.customKeyPrefix;
 							var value = field.val();
 
 							if ( field.is(":checkbox") ) {
@@ -308,7 +308,7 @@
 								return true;
 							}
 							var field = $( this );
-							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
+							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr("id") + field.attr( "name" ) + self.options.customKeyPrefix;
 							var resque = self.browserStorage.get( prefix );
 							if ( resque ) {
 								self.restoreFieldsData( field, resque );
@@ -479,7 +479,7 @@
 							return true;
 						}
 						var field = $( this );
-						var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
+						var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr("id") + field.attr( "name" ) + self.options.customKeyPrefix;
 						self.browserStorage.remove( prefix );
 						released = true;
 					} );
@@ -514,3 +514,4 @@
 		};
 	} )();
 } )( jQuery );
+
