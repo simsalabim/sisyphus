@@ -3,7 +3,7 @@
  * and other disasters.
  *
  * @author Alexander Kaupanin <kaupanin@gmail.com>
- * @version 1.1
+ * @version 1.1.1
  */
 
 ( function( $ ) {
@@ -170,9 +170,35 @@
 					}
 
 					if ( ! params.started[ this.getInstanceIdentifier() ] ) {
-						self.bindSaveData();
-						params.started[ this.getInstanceIdentifier() ] = true;
+						if ( self.isCKEditorPresent() ) {
+							var intervalId = setInterval( function() {
+								if (CKEDITOR.isLoaded) {
+									clearInterval(intervalId);
+									self.bindSaveData();
+									params.started[ self.getInstanceIdentifier() ] = true;
+								}
+							}, 100);
+						} else {
+							self.bindSaveData();
+							params.started[ self.getInstanceIdentifier() ] = true;
+						}
 					}
+				},
+
+				isCKEditorPresent: function() {
+					if ( this.isCKEditorExists() ) {
+						CKEDITOR.isLoaded = false;
+						CKEDITOR.on('instanceReady', function() {
+							CKEDITOR.isLoaded = true;
+						} );
+						return true;
+					} else {
+						return false;
+					}
+				},
+
+				isCKEditorExists: function() {
+					return typeof CKEDITOR != undefined;
 				},
 
 				/**
@@ -245,7 +271,17 @@
 									self.saveToBrowserStorage( prefix, value, false );
 								}
 							} else {
-								self.saveToBrowserStorage( prefix, value, false );
+								if ( self.isCKEditorExists() ) {
+									var editor;
+									if ( editor = CKEDITOR.instances[ field.attr("name") ] || CKEDITOR.instances[ field.attr("id") ] ) {
+										editor.updateElement();
+										self.saveToBrowserStorage( prefix, field.val(), false);
+									} else {
+										self.saveToBrowserStorage( prefix, value, false );
+									}
+								} else {
+									self.saveToBrowserStorage( prefix, value, false );
+								}
 							}
 						} );
 					} );
@@ -332,6 +368,15 @@
 						field.get(0).oninput = function() {
 							self.saveToBrowserStorage( prefix, field.val() );
 						};
+					}
+					if ( this.isCKEditorExists() ) {
+						var editor;
+						if ( editor = CKEDITOR.instances[ field.attr("name") ] || CKEDITOR.instances[ field.attr("id") ] ) {
+							editor.document.on( 'keyup', function( event ) {
+								editor.updateElement();
+								self.saveToBrowserStorage( prefix, field.val() );
+							} );
+						}
 					}
 				},
 
@@ -463,7 +508,9 @@
 			free: function() {
 				params = {};
 				return null;
-			}
+			},
+
+      version: '1.1.1'
 		};
 	} )();
 } )( jQuery );
