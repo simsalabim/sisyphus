@@ -3,7 +3,7 @@
  * and other disasters.
  *
  * @author Alexander Kaupanin <kaupanin@gmail.com>
- * @version 1.1.1
+ * @version 1.1.102
  */
 
 ( function( $ ) {
@@ -310,7 +310,7 @@
 							var field = $( this );
 							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
 							var resque = self.browserStorage.get( prefix );
-							if ( resque ) {
+							if ( resque !== null ) {
 								self.restoreFieldsData( field, resque );
 								restored = true;
 							}
@@ -510,7 +510,7 @@
 				return null;
 			},
 
-      version: '1.1.1'
+      version: '1.1.102'
 		};
 	} )();
 } )( jQuery );
