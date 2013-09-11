@@ -3,7 +3,7 @@
  * and other disasters.
  *
  * @author Alexander Kaupanin <kaupanin@gmail.com>
- * @version 1.1.102
+ * @version 1.1.103
  */
 
 ( function( $ ) {
@@ -114,7 +114,7 @@
 				setInitialOptions: function ( options ) {
 					var defaults = {
 						excludeFields: [],
-						customKeyPrefix: "",
+						customKeySuffix: "",
 						locationBased: false,
 						timeout: 0,
 						autoRelease: true,
@@ -222,7 +222,7 @@
 								return true;
 							}
 							var field = $( this );
-							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
+							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeySuffix;
 							if ( field.is( ":text" ) || field.is( "textarea" ) ) {
 								if ( ! self.options.timeout ) {
 									self.bindSaveDataImmediately( field, prefix );
@@ -252,7 +252,7 @@
 								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
 								return true;
 							}
-							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
+							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeySuffix;
 							var value = field.val();
 
 							if ( field.is(":checkbox") ) {
@@ -308,7 +308,7 @@
 								return true;
 							}
 							var field = $( this );
-							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
+							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeySuffix;
 							var resque = self.browserStorage.get( prefix );
 							if ( resque !== null ) {
 								self.restoreFieldsData( field, resque );
@@ -479,7 +479,7 @@
 							return true;
 						}
 						var field = $( this );
-						var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeyPrefix;
+						var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeySuffix;
 						self.browserStorage.remove( prefix );
 						released = true;
 					} );
@@ -510,7 +510,7 @@
 				return null;
 			},
 
-      version: '1.1.102'
+      version: '1.1.103'
 		};
 	} )();
 } )( jQuery );
