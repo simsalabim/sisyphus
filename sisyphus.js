@@ -442,6 +442,8 @@
 				 */
 				bindReleaseData: function() {
 					var self = this;
+					// Released form, are not started anymore. Fix for ajax loaded forms.
+					params.started[ self.getInstanceIdentifier() ] = false;
 					self.targets.each( function( i ) {
 						var target = $( this );
 						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" );
