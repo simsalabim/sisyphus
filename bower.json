@@ -1,7 +1,7 @@
 {
   "name": "sisyphus",
   "main": "sisyphus.js",
-  "version": "1.1.103",
+  "version": "1.1.104",
   "homepage": "http://sisyphus-js.herokuapp.com/",
   "authors": [
     "Alexander Kaupanin <kaupanin@gmail.com>"

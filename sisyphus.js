@@ -245,6 +245,7 @@
 					self.targets.each( function() {
 						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
 						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file").not( ":password" );
+						var multiCheckboxCache = {};
 
 						fieldsToProtect.each( function() {
 							var field = $( this );
@@ -257,10 +258,14 @@
 
 							if ( field.is(":checkbox") ) {
 								if ( field.attr( "name" ).indexOf( "[" ) !== -1 ) {
+									if ( multiCheckboxCache[ field.attr( "name" ) ] === true ) {
+										return;
+									}
 									value = [];
 									$( "[name='" + field.attr( "name" ) +"']:checked" ).each( function() {
 										value.push( $( this ).val() );
 									} );
+									multiCheckboxCache[ field.attr( "name" ) ] = true;
 								} else {
 									value = field.is( ":checked" );
 								}
