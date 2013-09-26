@@ -1,7 +1,7 @@
 # Sisyphus
 Plugin developed to save html forms data to LocalStorage to restore them after browser crashes, tabs closings and other disasters.
 
-Description and sample are available at http://simsalabim.github.com/sisyphus/
+Description and sample are available at http://sisyphus-js.herokuapp.com/
 
 Smashing Magazine article: http://coding.smashingmagazine.com/2011/12/05/sisyphus-js-client-side-drafts-and-more/
 
