@@ -3,7 +3,7 @@
  * and other disasters.
  *
  * @author Alexander Kaupanin <kaupanin@gmail.com>
- * @version 1.1.106
+ * @version 1.1.107
  */
 
 ( function( $ ) {
@@ -442,8 +442,6 @@
 				 */
 				bindReleaseData: function() {
 					var self = this;
-					// Released form, are not started anymore. Fix for ajax loaded forms.
-					params.started[ self.getInstanceIdentifier() ] = false;
 					self.targets.each( function( i ) {
 						var target = $( this );
 						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" );
@@ -480,6 +478,10 @@
 				releaseData: function( targetFormIdAndName, fieldsToProtect ) {
 					var released = false;
 					var self = this;
+
+					// Released form, are not started anymore. Fix for ajax loaded forms.
+					params.started[ self.getInstanceIdentifier() ] = false;
+
 					fieldsToProtect.each( function() {
 						if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
 							// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
@@ -519,7 +521,7 @@
 				};
 				return null;
 			},
-			version: '1.1.106'
+			version: '1.1.107'
 		};
 	} )();
 } )( jQuery );
