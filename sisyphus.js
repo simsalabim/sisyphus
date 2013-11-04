@@ -347,7 +347,13 @@
 						if ( field.val() === resque ) {
 							field.attr( "checked", "checked" );
 						}
-					} else if ( field.attr( "name" ).indexOf( "[" ) === -1 ) {
+					} else if(field.prop('type') === 'select-one') {
+						if(field.find('option[value="' + resque + '"]').length !==0) {
+							field.val( resque );
+						}else {
+							field.val(field.find('option:first').val());
+						}
+					}else if ( field.attr( "name" ).indexOf( "[" ) === -1 ) {
 						field.val( resque );
 					} else {
 						resque = resque.split( "," );
