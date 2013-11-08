@@ -215,7 +215,7 @@
 
 					self.targets.each( function() {
 						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
-						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" );
+						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" ).not( ":disabled" ).not( "[readonly]" );
 						fieldsToProtect.each( function() {
 							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
 								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
@@ -244,7 +244,7 @@
 					var self = this;
 					self.targets.each( function() {
 						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
-						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file").not( ":password" );
+						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file").not( ":password" ).not( ":disabled" ).not( "[readonly]" );
 						var multiCheckboxCache = {};
 
 						fieldsToProtect.each( function() {
@@ -305,7 +305,7 @@
 					self.targets.each( function() {
 						var target = $( this );
 						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" );
+						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" ).not( ":disabled" ).not( "[readonly]" );
 
 						fieldsToProtect.each( function() {
 							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
@@ -444,7 +444,7 @@
 					var self = this;
 					self.targets.each( function( i ) {
 						var target = $( this );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" );
+						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" ).not( ":disabled" ).not( "[readonly]" );
 						var formIdAndName = target.attr( "id" ) + target.attr( "name" );
 						$( this ).bind( "submit reset", function() {
 							self.releaseData( formIdAndName, fieldsToProtect );
@@ -461,7 +461,7 @@
 					var self = this;
 					self.targets.each( function( i ) {
 						var target = $( this );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" );
+						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" ).not( ":disabled" ).not( "[readonly]" );
 						var formIdAndName = target.attr( "id" ) + target.attr( "name" );
 						self.releaseData( formIdAndName, fieldsToProtect );
 					} );
