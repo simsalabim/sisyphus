@@ -93,7 +93,7 @@
 			started: []
 		};
 
-		function init ( identifier ) {
+		function init () {
 
 			return {
 				setInstanceIdentifier: function( identifier ) {
@@ -201,6 +201,10 @@
 					return typeof CKEDITOR != "undefined";
 				},
 
+				findFieldsToProtect: function( target ) {
+					return target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" ).not( ":disabled" ).not( "[readonly]" );
+				},
+
 				/**
 				 * Bind saving data
 				 *
@@ -215,8 +219,7 @@
 
 					self.targets.each( function() {
 						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
-						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" ).not( ":disabled" ).not( "[readonly]" );
-						fieldsToProtect.each( function() {
+						self.findFieldsToProtect( $( this ) ).each( function() {
 							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
 								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
 								return true;
@@ -228,7 +231,7 @@
 									self.bindSaveDataImmediately( field, prefix );
 								}
 							}
-							self.bindSaveDataOnChange( field, prefix );
+							self.bindSaveDataOnChange( field );
 						} );
 					} );
 				},
@@ -236,7 +239,7 @@
 				/**
 				 * Save all protected forms data to Local Storage.
 				 * Common method, necessary to not lead astray user firing 'data is saved' when select/checkbox/radio
-				 * is changed and saved, while textfield data is saved only by timeout
+				 * is changed and saved, while text field data is saved only by timeout
 				 *
 				 * @return void
 				 */
@@ -244,10 +247,9 @@
 					var self = this;
 					self.targets.each( function() {
 						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
-						var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file").not( ":password" ).not( ":disabled" ).not( "[readonly]" );
 						var multiCheckboxCache = {};
 
-						fieldsToProtect.each( function() {
+						self.findFieldsToProtect( $( this) ).each( function() {
 							var field = $( this );
 							if ( $.inArray( this, self.options.excludeFields ) !== -1 || field.attr( "name" ) === undefined ) {
 								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
@@ -305,9 +307,8 @@
 					self.targets.each( function() {
 						var target = $( this );
 						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" ).not( ":disabled" ).not( "[readonly]" );
 
-						fieldsToProtect.each( function() {
+						self.findFieldsToProtect( target ).each( function() {
 							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
 								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
 								return true;
@@ -377,7 +378,7 @@
 					if ( this.isCKEditorExists() ) {
 						var editor;
 						if ( editor = CKEDITOR.instances[ field.attr("name") ] || CKEDITOR.instances[ field.attr("id") ] ) {
-							editor.document.on( 'keyup', function( event ) {
+							editor.document.on( 'keyup', function() {
 								editor.updateElement();
 								self.saveToBrowserStorage( prefix, field.val() );
 							} );
@@ -407,11 +408,10 @@
 				 * Bind saving field data on change
 				 *
 				 * @param Object field		jQuery form element object
-				 * @param String prefix	 prefix used as key to store data in local storage
 				 *
 				 * @return void
 				 */
-				bindSaveDataOnChange: function( field, prefix ) {
+				bindSaveDataOnChange: function( field ) {
 					var self = this;
 					field.change( function() {
 						self.saveAllData();
@@ -426,7 +426,7 @@
 				saveDataByTimeout: function() {
 					var self = this;
 					var targetForms = self.targets;
-					setTimeout( ( function( targetForms ) {
+					setTimeout( ( function() {
 						function timeout() {
 							self.saveAllData();
 							setTimeout( timeout, self.options.timeout * 1000 );
@@ -442,12 +442,11 @@
 				 */
 				bindReleaseData: function() {
 					var self = this;
-					self.targets.each( function( i ) {
+					self.targets.each( function() {
 						var target = $( this );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" ).not( ":disabled" ).not( "[readonly]" );
 						var formIdAndName = target.attr( "id" ) + target.attr( "name" );
 						$( this ).bind( "submit reset", function() {
-							self.releaseData( formIdAndName, fieldsToProtect );
+							self.releaseData( formIdAndName, self.findFieldsToProtect( target ) );
 						} );
 					} );
 				},
@@ -459,11 +458,10 @@
 				 */
 				manuallyReleaseData: function() {
 					var self = this;
-					self.targets.each( function( i ) {
+					self.targets.each( function() {
 						var target = $( this );
-						var fieldsToProtect = target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" ).not( ":disabled" ).not( "[readonly]" );
 						var formIdAndName = target.attr( "id" ) + target.attr( "name" );
-						self.releaseData( formIdAndName, fieldsToProtect );
+						self.releaseData( formIdAndName, self.findFieldsToProtect( target ) );
 					} );
 				},
 
