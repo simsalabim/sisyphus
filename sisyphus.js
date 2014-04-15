@@ -246,10 +246,11 @@
 				saveAllData: function() {
 					var self = this;
 					self.targets.each( function() {
-						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
+						var form = $( this );
+						var targetFormIdAndName = form.attr( "id" ) + form.attr( "name" );
 						var multiCheckboxCache = {};
 
-						self.findFieldsToProtect( $( this) ).each( function() {
+						self.findFieldsToProtect( form ).each( function() {
 							var field = $( this );
 							if ( $.inArray( this, self.options.excludeFields ) !== -1 || field.attr( "name" ) === undefined ) {
 								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
@@ -264,7 +265,7 @@
 										return;
 									}
 									value = [];
-									$( "[name='" + field.attr( "name" ) +"']:checked" ).each( function() {
+									$( "[name='" + field.attr( "name" ) +"']:checked" , form).each( function() {
 										value.push( $( this ).val() );
 									} );
 									multiCheckboxCache[ field.attr( "name" ) ] = true;
