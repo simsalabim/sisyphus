@@ -294,6 +294,39 @@
 					} );
 					self.options.onSave.call( self );
 				},
+                                
+                                /**
+                                 * Checks if data for a target has been saved
+                                 * in Local Storage
+                                 * 
+                                 * @return Boolean
+                                 */
+                                hasDataToRestore: function() {
+                                    var self = this;
+                                    var hasDataToRestore = false;
+
+                                    self.targets.each(function() {
+                                        var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
+                                        
+                                        self.findFieldsToProtect($(this)).each(function() {
+                                            if ($.inArray(this, self.options.excludeFields) !== -1) {
+                                                // Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
+                                                return true;
+                                            } else {
+                                                var field = $( this );
+                                                var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeySuffix;
+                                                var resque = self.browserStorage.get( prefix );
+                                                if ( resque !== null ) {
+                                                    // Found data, abort loop
+                                                    hasDataToRestore = true;
+                                                    return false;
+                                                }
+                                            }
+                                        });
+                                    });
+                                    
+                                    return hasDataToRestore;
+                                },
 
 				/**
 				 * Restore forms data from Local Storage
