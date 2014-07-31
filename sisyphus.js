@@ -118,6 +118,7 @@
 						locationBased: false,
 						timeout: 0,
 						autoRelease: true,
+                        noFormID: false,
 						onSave: function() {},
 						onBeforeRestore: function() {},
 						onRestore: function() {},
@@ -217,8 +218,8 @@
 						self.saveDataByTimeout();
 					}
 
-					self.targets.each( function() {
-						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
+					self.targets.each(function () {
+					    var targetFormIdAndName = ( self.options.noFormID ? "/" : $(this).attr("id") + $(this).attr("name") );
 						self.findFieldsToProtect( $( this ) ).each( function() {
 							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
 								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
@@ -246,8 +247,8 @@
 				saveAllData: function() {
 					var self = this;
 					self.targets.each( function() {
-						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
-						var multiCheckboxCache = {};
+					    var targetFormIdAndName = (self.options.noFormID ? "/" : $(this).attr("id") + $(this).attr("name"));
+					    var multiCheckboxCache = {};
 
 						self.findFieldsToProtect( $( this) ).each( function() {
 							var field = $( this );
@@ -306,7 +307,7 @@
 
 					self.targets.each( function() {
 						var target = $( this );
-						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
+						var targetFormIdAndName = (self.options.noFormID ? "/" : $(this).attr("id") + $(this).attr("name"));
 
 						self.findFieldsToProtect( target ).each( function() {
 							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
@@ -460,8 +461,8 @@
 					var self = this;
 					self.targets.each( function() {
 						var target = $( this );
-						var formIdAndName = target.attr( "id" ) + target.attr( "name" );
-						self.releaseData( formIdAndName, self.findFieldsToProtect( target ) );
+						var formIdAndName = (self.options.noFormID ? "/" : $(this).attr("id") + $(this).attr("name"));
+						self.releaseData(formIdAndName, self.findFieldsToProtect(target));
 					} );
 				},
 
