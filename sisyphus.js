@@ -118,7 +118,8 @@
 						locationBased: false,
 						timeout: 0,
 						autoRelease: true,
-                        noFormID: false,
+            noFormID: false,	//Include the formid and form name in the prefix or just a slash. 
+															//False do as per normal, True include the slash
 						onSave: function() {},
 						onBeforeRestore: function() {},
 						onRestore: function() {},
