@@ -445,7 +445,7 @@
 					var self = this;
 					self.targets.each( function() {
 						var target = $( this );
-						var formIdAndName = target.attr( "id" ) + target.attr( "name" );
+						var formIdAndName = (self.options.noFormID ? "/" : $(this).attr("id") + $(this).attr("name"));
 						$( this ).bind( "submit reset", function() {
 							self.releaseData( formIdAndName, self.findFieldsToProtect( target ) );
 						} );
