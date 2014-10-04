@@ -7,9 +7,11 @@ Smashing Magazine article: http://coding.smashingmagazine.com/2011/12/05/sisyphu
 
 # How to contribute
 1. Fork the repository
-2. Make your changes
-3. Check that your code style matches [jQuery Core Style Guidelines](http://contribute.jquery.org/style-guide/js/)
-4. Use [uglifyjs](http://marijnhaverbeke.nl/uglifyjs) to build minified version of Sisyphus
-5. Send a pull request
+2. Install dependencies with `nmp install`
+3. Run `./node_modules/karma/bin/karma start` (or `$ npm install -g karma-cli` and `karma start`)
+4. Make your changes
+5. Write some specs and make sure that you did not break existing ones
+6. Check that your code style matches [jQuery Core Style Guidelines](http://contribute.jquery.org/style-guide/js/)
+7. Send a pull request
 
 Author: Alexander Kaupanin
