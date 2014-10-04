@@ -1,6 +1,6 @@
 describe("Sisyphus", function() {
 	var sisyphus, targetForm, namedForm;
-	
+
 	beforeEach( function() {
 		loadFixtures( "fixtures.html" );
 		sisyphus = Sisyphus.getInstance();
@@ -158,9 +158,6 @@ describe("Sisyphus", function() {
 	} );
 	
 	it( "should fire callback on restoring data from Local Storage", function() {
-		spyOn( localStorage, "getItem" ).andCallFake( function() { 
-			return "value";
-		} );
 		spyOn( sisyphus.options, "onRestore" );
 		sisyphus.restoreAllData();
 		expect( sisyphus.options.onRestore ).toHaveBeenCalled();
