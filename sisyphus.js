@@ -3,7 +3,6 @@
  * and other disasters.
  *
  * @author Alexander Kaupanin <kaupanin@gmail.com>
- * @version 1.1.107
  */
 
 ( function( $ ) {
@@ -523,7 +522,7 @@
 				};
 				return null;
 			},
-			version: '1.1.107'
+			version: '1.1.2'
 		};
 	} )();
 } )( jQuery );
