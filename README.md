@@ -7,7 +7,7 @@ Smashing Magazine article: http://coding.smashingmagazine.com/2011/12/05/sisyphu
 
 # How to contribute
 1. Fork the repository
-2. Install dependencies with `nmp install`
+2. Install dependencies with `npm install`
 3. Run `./node_modules/karma/bin/karma start` (or `$ npm install -g karma-cli` and `karma start`)
 4. Make your changes
 5. Write some specs and make sure that you did not break existing ones
