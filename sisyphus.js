@@ -152,7 +152,7 @@
 					var self = this;
 					this.targets = this.targets || [];
 					if ( self.options.name ) {
-//						this.href = self.options.name
+						this.href = self.options.name
 					} else {
 						this.href = location.hostname + location.pathname + location.search + location.hash;
 					}
