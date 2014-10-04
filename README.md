@@ -1,4 +1,4 @@
-# Sisyphus
+# Sisyphus ![Build Status] (https://travis-ci.org/simsalabim/sisyphus.svg?branch=master "Build Status")
 Plugin developed to save html forms data to LocalStorage to restore them after browser crashes, tabs closings and other disasters.
 
 Description and sample are available at http://sisyphus-js.herokuapp.com/
