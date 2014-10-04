@@ -202,9 +202,11 @@ describe("jQuery.sisyphus", function() {
 	} );
 
 	it( "should protect matched forms with Sisyphus", function() {
-		spyOn( Sisyphus.getInstance(), "protect" );
+		var form = $( "#form1");
+		var identifier = form.attr( "id" ) + form.attr( "name" );
+		spyOn( Sisyphus.getInstance( identifier ), "protect" );
 		$( "#form1" ).sisyphus(),
-		expect( Sisyphus.getInstance().protect ).toHaveBeenCalled();
+		expect( Sisyphus.getInstance( identifier ).protect ).toHaveBeenCalled();
 	} );
 	
 });
