@@ -152,7 +152,11 @@
 					targets = targets || {};
 					var self = this;
 					this.targets = this.targets || [];
-					this.href = location.hostname + location.pathname + location.search + location.hash;
+					if ( self.options.name ) {
+						this.href = self.options.name
+					} else {
+						this.href = location.hostname + location.pathname + location.search + location.hash;
+					}
 					this.targets = $.merge( this.targets, targets );
 					this.targets = $.unique( this.targets );
 					this.targets = $( this.targets );
