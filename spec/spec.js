@@ -185,11 +185,12 @@ describe("jQuery.sisyphus", function() {
 	beforeEach( function() {
 		loadFixtures( "fixtures.html" );
 	} );
-	
-	
+
 	it( "should return a Sisyphus instance", function() {
+		var form = $( "#form1");
+		var identifier = form.attr( "id" ) + form.attr( "name" );
 		var o =  $( "#form1" ).sisyphus(),
-			sisyphus = Sisyphus.getInstance();
+				sisyphus = Sisyphus.getInstance( identifier );
 		expect( o ).toEqual( sisyphus );
 	} );
 
