@@ -4,7 +4,7 @@
   "description": "Gmail-like client-side drafts and bit more. Plugin developed to save html forms data to LocalStorage to restore them after browser crashes, tabs closings and other disasters.",
   "main": "sisyphus.js",
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start --single-run --browsers Firefox"
+    "test": "./node_modules/karma/bin/karma start overhaul.conf.js --single-run --browsers Firefox"
   },
   "repository": {
     "type": "git",
