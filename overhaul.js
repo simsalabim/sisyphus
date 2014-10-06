@@ -30,6 +30,47 @@ Sisyphus.prototype.protect = function( form ) {
 			} );
 		}
 	}
+
+	document.addEventListener( "load", function() {
+		self.restoreFormData( form );
+	} );
+};
+
+Sisyphus.prototype.restoreFormData = function( form ) {
+	var form_elements = this.formElements( form ), i, element, self = this;
+
+	for ( var key in form_elements ) {
+		for( i in form_elements[ key ] ) {
+			element = form_elements[ key ][ i ];
+
+			self.restoreElementValue( element );
+		}
+	}
+};
+
+Sisyphus.prototype.restoreElementValue = function ( element ) {
+	if ( this.isGroupInputElement( element ) ) {
+		this.restoreGroupElement( element );
+	} else {
+		this.restoreNonGroupElement( element );
+	}
+};
+
+Sisyphus.prototype.restoreGroupElement = function ( element ) {
+
+};
+
+Sisyphus.prototype.restoreNonGroupElement = function ( element ) {
+	var key;
+	if ( element.id !== "" ) {
+		key = element.id;
+	} else if ( document.querySelectorAll( "[name='" + element.name + "']").length === 1 ) {
+		key = element.name;
+	} else {
+		console.error( "The element is not unique on the page - has no id and there are elements with the same name");
+		return;
+	}
+	element.value = localStorage.getItem( key );
 };
 
 Sisyphus.prototype.saveToStorage = function( element ) {
@@ -47,7 +88,7 @@ Sisyphus.prototype.saveNonGroupElementToStorage = function( element ) {
 	} else if ( document.querySelectorAll( "[name='" + element.name + "']").length === 1 ) {
 		key = element.name;
 	} else {
-		throw new Error( "The element is not unique on the page - has no id and there are elements with the same name ");
+		throw new Error( "The element is not unique on the page - has no id and there are elements with the same name");
 	}
 	localStorage.setItem( key, element.value );
 };

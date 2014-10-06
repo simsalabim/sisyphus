@@ -53,14 +53,31 @@ describe("Sisyphus", function() {
 	describe( "protect", function() {
 		[ "name" , "country", "planet", "story" ].forEach( function( id ) {
 			it( "should save element's data to local storage if change has been triggered", function() {
-				var change_event = new Event( "change"),
+				var event = new Event( "change" ),
 						element = document.getElementById( id );
 
 				sisyphus.protect( form );
 				spyOn( sisyphus, "saveToStorage" );
-				element.dispatchEvent( change_event );
+				element.dispatchEvent( event );
 				expect( sisyphus.saveToStorage ).toHaveBeenCalled();
 			} );
+		} );
+
+		it( "should trigger restore form's data on document load", function() {
+			var event = new Event( "load" );
+
+			sisyphus.protect( form );
+			spyOn( sisyphus, "restoreFormData" );
+			document.dispatchEvent( event );
+			expect( sisyphus.restoreFormData ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( "restoreFormData", function() {
+		it( "should invoke restore data for each form's element", function() {
+			spyOn( sisyphus, "restoreElementValue" );
+			sisyphus.restoreFormData( form );
+			expect( sisyphus.restoreElementValue ).toHaveBeenCalled();
 		} );
 	} );
 
@@ -110,7 +127,7 @@ describe("Sisyphus", function() {
 			var id, name, value, body = document.getElementsByTagName( "body" )[ 0 ];
 			body.appendChild( element );
 //			TODO Firefox
-//			spyOn( localStorage, "setItem" );
+			spyOn( localStorage, "setItem" );
 		} );
 
 		afterEach( function() {
@@ -124,7 +141,7 @@ describe("Sisyphus", function() {
 			element.value = value;
 			sisyphus.saveNonGroupElementToStorage( element );
 //			TODO Firefox
-//			expect( localStorage.setItem ).toHaveBeenCalledWith( id, value );
+			expect( localStorage.setItem ).toHaveBeenCalledWith( id, value );
 		} );
 
 		it( "should store elements value if it has unique name", function() {
@@ -137,7 +154,7 @@ describe("Sisyphus", function() {
 
 			sisyphus.saveNonGroupElementToStorage( element );
 //			TODO Firefox
-//			expect( localStorage.setItem).toHaveBeenCalledWith( name, value );
+			expect( localStorage.setItem).toHaveBeenCalledWith( name, value );
 		} );
 
 		it( "should raise an error if element has no id and its name is not unique", function() {
