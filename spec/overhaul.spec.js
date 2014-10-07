@@ -59,16 +59,13 @@ describe("Sisyphus", function() {
 				sisyphus.protect( form );
 				spyOn( sisyphus, "saveToStorage" );
 				element.dispatchEvent( event );
-				expect( sisyphus.saveToStorage ).toHaveBeenCalled();
+				expect( sisyphus.saveToStorage ).toHaveBeenCalledWith( element );
 			} );
 		} );
 
-		it( "should trigger restore form's data on document load", function() {
-			var event = new Event( "load" );
-
-			sisyphus.protect( form );
+		it( "should trigger restore form's data", function() {
 			spyOn( sisyphus, "restoreFormData" );
-			document.dispatchEvent( event );
+			sisyphus.protect( form );
 			expect( sisyphus.restoreFormData ).toHaveBeenCalled();
 		} );
 

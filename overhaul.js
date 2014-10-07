@@ -26,14 +26,12 @@ Sisyphus.prototype.protect = function( form ) {
 			element = form_elements[ key ][ i ];
 
 			element.addEventListener( "change" , function() {
-				self.saveToStorage( element );
+				self.saveToStorage( this );
 			} );
 		}
 	}
 
-	document.addEventListener( "load", function() {
-		self.restoreFormData( form );
-	} );
+	self.restoreFormData( form );
 };
 
 Sisyphus.prototype.restoreFormData = function( form ) {
