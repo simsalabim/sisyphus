@@ -71,14 +71,64 @@ describe("Sisyphus", function() {
 			document.dispatchEvent( event );
 			expect( sisyphus.restoreFormData ).toHaveBeenCalled();
 		} );
+
+		it( "should not trigger restore form's data if document load has not been triggered", function() {
+			var event = new Event( "unload" );
+
+			sisyphus.protect( form );
+			spyOn( sisyphus, "restoreFormData" );
+			document.dispatchEvent( event );
+			expect( sisyphus.restoreFormData ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	describe( "restoreFormData", function() {
 		it( "should invoke restore data for each form's element", function() {
 			spyOn( sisyphus, "restoreElementValue" );
 			sisyphus.restoreFormData( form );
+//			TODO count times
 			expect( sisyphus.restoreElementValue ).toHaveBeenCalled();
 		} );
+	} );
+
+	describe( "restoreElementValue", function() {
+		describe("non group element", function() {
+			beforeEach( function() {
+				subject = document.createElement( "input" );
+				spyOn( sisyphus, 'isGroupInputElement').andReturn(false);
+				spyOn( sisyphus, 'restoreGroupElement');
+				spyOn( sisyphus, 'restoreNonGroupElement');
+			} );
+
+			it( "should trigger restore of a non-group element", function() {
+				sisyphus.restoreElementValue( subject );
+				expect( sisyphus.restoreNonGroupElement ).toHaveBeenCalled();
+			} );
+
+			it( "should not trigger restore of a group element", function() {
+				sisyphus.restoreElementValue( subject );
+				expect( sisyphus.restoreGroupElement ).not.toHaveBeenCalled();
+			} );
+		});
+
+		describe( "group element", function() {
+			beforeEach( function() {
+				element = document.createElement( "input" );
+				spyOn( sisyphus, "isGroupInputElement" ).andReturn( true );
+				spyOn( sisyphus, "restoreGroupElement" );
+				spyOn( sisyphus, "restoreNonGroupElement" );
+			} );
+
+			it( "should trigger restore of a group element", function() {
+				sisyphus.restoreElementValue( element );
+				expect( sisyphus.restoreGroupElement ).toHaveBeenCalled();
+			} );
+
+			it( "should not trigger restore of a non-group element", function() {
+				sisyphus.restoreElementValue( element );
+				expect( sisyphus.restoreNonGroupElement ).not.toHaveBeenCalled();
+			} );
+		});
 	} );
 
 	describe( "saveToStorage", function() {
@@ -170,6 +220,64 @@ describe("Sisyphus", function() {
 			another_element.name = name;
 
 			expect( function() { sisyphus.saveNonGroupElementToStorage( element ) } ).toThrow();
+			body.removeChild( another_element );
+		} );
+	} );
+
+	describe( "restoreNonGroupElement", function() {
+		beforeEach( function() {
+			element = document.createElement( "input" );
+			var id, name, value, body = document.getElementsByTagName( "body" )[ 0 ];
+			body.appendChild( element );
+//			TODO Firefox
+			spyOn( localStorage, "getItem" ).andReturn( "retrieved value" );
+		} );
+
+		afterEach( function() {
+			var body = document.getElementsByTagName( "body" )[ 0 ];
+			body.removeChild( element );
+		} );
+
+		it( "should restore elements value if it has an id", function() {
+			var id = "some-id", value = "some-value";
+			element.id = id;
+			element.value = value;
+			sisyphus.restoreNonGroupElement( element );
+//			TODO Firefox
+			expect( localStorage.getItem ).toHaveBeenCalledWith( id );
+			expect( element.value ).toEqual( "retrieved value" );
+		} );
+
+		it( "should store elements value if it has unique name", function() {
+			id = "";
+			value = "some-value";
+			name = "some-name";
+			element.id = id;
+			element.value = value;
+			element.name = name;
+
+			sisyphus.restoreNonGroupElement( element );
+//			TODO Firefox
+			expect( localStorage.getItem ).toHaveBeenCalledWith( name );
+			expect( element.value ).toEqual( "retrieved value" );
+		} );
+
+		it( "should print an error if element has no id and its name is not unique", function() {
+			var another_element = document.createElement( "input" ),
+					body = document.getElementsByTagName( "body" )[ 0 ];
+			body.appendChild( another_element );
+			id = "";
+			value = "some-value";
+			name = "some-name";
+			element.id = id;
+			element.value = value;
+			element.name = name;
+			another_element.name = name;
+			spyOn(console, 'error');
+
+			sisyphus.restoreNonGroupElement( element );
+			expect( console.error ).toHaveBeenCalledWith( "The element is not unique on the page - has no id and there are elements with the same name" );
+			expect( element.value ).toEqual( value );
 			body.removeChild( another_element );
 		} );
 	} );
