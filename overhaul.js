@@ -86,6 +86,7 @@ Sisyphus.prototype.restoreNonGroupElement = function ( element ) {
 		key = element.name;
 	} else {
 		console.error( "The element is not unique on the page - has no id and there are elements with the same name");
+		console.error( element );
 		return;
 	}
 	element.value = localStorage.getItem( key );
@@ -109,6 +110,8 @@ Sisyphus.prototype.saveSelectMultipleToStorage = function( element ) {
 		key = element.name;
 	} else {
 		throw new Error( "The element is not unique on the page - has no id and there are elements with the same name");
+		console.error( element );
+		return;
 	}
 	for( var i = 0; i < element.options.length; i++ ) {
 		if ( element.options[ i ].selected ) {
@@ -126,6 +129,8 @@ Sisyphus.prototype.restoreSelectMultiple = function( element ) {
 		key = element.name;
 	} else {
 		throw new Error( "The element is not unique on the page - has no id and there are elements with the same name");
+		console.error( element );
+		return;
 	}
 
 	values = localStorage.getItem( key ) || [];
@@ -144,6 +149,8 @@ Sisyphus.prototype.saveNonGroupElementToStorage = function( element ) {
 		key = element.name;
 	} else {
 		throw new Error( "The element is not unique on the page - has no id and there are elements with the same name");
+		console.error( element );
+		return;
 	}
 	localStorage.setItem( key, element.value );
 };
@@ -167,9 +174,9 @@ Sisyphus.prototype.saveGroupElementToStorage = function( element ) {
 };
 
 Sisyphus.prototype.formElements = function( form ) {
-	var select_list = form.getElementsByTagName( "select"),
-	textarea_list = form.getElementsByTagName( "textarea"),
-	input_list = form.getElementsByTagName( "input"),
+	var select_list = form.getElementsByTagName( "select" ),
+	textarea_list = form.getElementsByTagName( "textarea" ),
+	input_list = form.getElementsByTagName( "input" ),
 	i;
 
 	var map = {
@@ -177,7 +184,8 @@ Sisyphus.prototype.formElements = function( form ) {
 		text: [],
 		textarea: [],
 		checkbox: [],
-		radio: []
+		radio: [],
+		hidden: []
 	};
 
 	for ( i = 0; i < textarea_list.length; i++ ) {
@@ -189,14 +197,8 @@ Sisyphus.prototype.formElements = function( form ) {
 	};
 
 	for ( i = 0; i < input_list.length; i++ ) {
-		if ( input_list[i].type === "checkbox" ) {
-			map.checkbox.push( input_list[ i ] );
-		}
-		if ( input_list[i].type === "radio" ) {
-			map.radio.push( input_list[ i ] );
-		}
-		if ( input_list[i].type === "text" ) {
-			map.text.push( input_list[ i ] );
+		if ( Object.prototype.toString.call( map[ input_list[ i ].type ] ) === "[object Array]" ) {
+			map[ input_list[ i ].type ].push( input_list[ i ] );
 		}
 	};
 
