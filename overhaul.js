@@ -1,5 +1,4 @@
 function Sisyphus(options) {
-	this.GROUP_INPUT_TYPES = [ "radio", "checkbox" ];
 
 	this.options = {
 		excludeFields: [],
@@ -15,7 +14,11 @@ function Sisyphus(options) {
 };
 
 Sisyphus.prototype.isGroupInputElement = function( element ) {
-	return this.GROUP_INPUT_TYPES.indexOf( element.type ) !== -1;
+	return [ "radio", "checkbox" ].indexOf( element.type ) !== -1;
+};
+
+Sisyphus.prototype.isSelectMultiple = function( element ) {
+	return element.type === "select-multiple";
 };
 
 Sisyphus.prototype.protect = function( form ) {
@@ -49,13 +52,30 @@ Sisyphus.prototype.restoreFormData = function( form ) {
 Sisyphus.prototype.restoreElementValue = function ( element ) {
 	if ( this.isGroupInputElement( element ) ) {
 		this.restoreGroupElement( element );
+	} else if ( this.isSelectMultiple( element ) ) {
+		this.restoreSelectMultiple( element );
 	} else {
 		this.restoreNonGroupElement( element );
 	}
 };
 
 Sisyphus.prototype.restoreGroupElement = function ( element ) {
+	var key, values;
+	var elements = document.querySelectorAll( "[name='" + element.name + "']" );
 
+	if ( elements.length ) {
+		key = element.name;
+		values = localStorage.getItem( key ) || [];
+
+		for ( var i = 0; i < elements.length; i++ ) {
+			if ( values.indexOf( elements[i].value ) !== -1 ) {
+				elements[i].checked = true;
+			}
+		}
+	} else {
+		console.error(element);
+		console.error( "The group input element has no name." );
+	}
 };
 
 Sisyphus.prototype.restoreNonGroupElement = function ( element ) {
@@ -74,8 +94,45 @@ Sisyphus.prototype.restoreNonGroupElement = function ( element ) {
 Sisyphus.prototype.saveToStorage = function( element ) {
 	if ( this.isGroupInputElement( element ) ) {
 		this.saveGroupElementToStorage( element );
+	} else if ( this.isSelectMultiple( element ) ) {
+		this.saveSelectMultipleToStorage( element );
 	} else {
 		this.saveNonGroupElementToStorage( element );
+	}
+};
+
+Sisyphus.prototype.saveSelectMultipleToStorage = function( element ) {
+	var key, values = [];
+	if ( element.id !== "" ) {
+		key = element.id;
+	} else if ( document.querySelectorAll( "[name='" + element.name + "']" ).length === 1 ) {
+		key = element.name;
+	} else {
+		throw new Error( "The element is not unique on the page - has no id and there are elements with the same name");
+	}
+	for( var i = 0; i < element.options.length; i++ ) {
+		if ( element.options[ i ].selected ) {
+			values.push( element.options[ i ].value );
+		}
+	}
+	localStorage.setItem( key, values );
+};
+
+Sisyphus.prototype.restoreSelectMultiple = function( element ) {
+	var key, values;
+	if ( element.id !== "" ) {
+		key = element.id;
+	} else if ( document.querySelectorAll( "[name='" + element.name + "']" ).length === 1 ) {
+		key = element.name;
+	} else {
+		throw new Error( "The element is not unique on the page - has no id and there are elements with the same name");
+	}
+
+	values = localStorage.getItem( key ) || [];
+	for( var i = 0; i < element.options.length; i++ ) {
+		if ( values.indexOf( element.options[ i ].value ) !== -1 ) {
+			element.options[ i ].selected = true;
+		}
 	}
 };
 
@@ -83,7 +140,7 @@ Sisyphus.prototype.saveNonGroupElementToStorage = function( element ) {
 	var key;
 	if ( element.id !== "" ) {
 		key = element.id;
-	} else if ( document.querySelectorAll( "[name='" + element.name + "']").length === 1 ) {
+	} else if ( document.querySelectorAll( "[name='" + element.name + "']" ).length === 1 ) {
 		key = element.name;
 	} else {
 		throw new Error( "The element is not unique on the page - has no id and there are elements with the same name");
@@ -92,7 +149,21 @@ Sisyphus.prototype.saveNonGroupElementToStorage = function( element ) {
 };
 
 Sisyphus.prototype.saveGroupElementToStorage = function( element ) {
+	var key, values = [];
+	var elements = document.querySelectorAll( "[name='" + element.name + "']" );
 
+	if ( elements.length ) {
+		key = element.name;
+		for ( var i = 0; i < elements.length; i++ ) {
+			if ( elements[i].checked ) {
+				values.push( elements[i].value );
+			}
+		}
+	} else {
+		console.error(element);
+		throw new Error( "The group input element has no name." );
+	}
+	localStorage.setItem( key, values );
 };
 
 Sisyphus.prototype.formElements = function( form ) {
