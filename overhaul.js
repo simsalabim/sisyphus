@@ -8,7 +8,7 @@ function Sisyphus(options) {
 	};
 	options = options || {};
 
-	for ( key in options ) {
+	for ( var key in options ) {
 		this.options[ key ] = options[ key ];
 	}
 };
