@@ -1,4 +1,4 @@
-function Sisyphus(options) {
+function Sisyphus( options ) {
 
 	this.options = {
 		excludeFields: [],
