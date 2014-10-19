@@ -110,8 +110,6 @@ Sisyphus.prototype.saveSelectMultipleToStorage = function( element ) {
 		key = element.name;
 	} else {
 		throw new Error( "The element is not unique on the page - has no id and there are elements with the same name");
-		console.error( element );
-		return;
 	}
 	for( var i = 0; i < element.options.length; i++ ) {
 		if ( element.options[ i ].selected ) {
@@ -129,8 +127,6 @@ Sisyphus.prototype.restoreSelectMultiple = function( element ) {
 		key = element.name;
 	} else {
 		throw new Error( "The element is not unique on the page - has no id and there are elements with the same name");
-		console.error( element );
-		return;
 	}
 
 	values = localStorage.getItem( key ) || [];
@@ -149,8 +145,6 @@ Sisyphus.prototype.saveNonGroupElementToStorage = function( element ) {
 		key = element.name;
 	} else {
 		throw new Error( "The element is not unique on the page - has no id and there are elements with the same name");
-		console.error( element );
-		return;
 	}
 	localStorage.setItem( key, element.value );
 };
@@ -190,17 +184,17 @@ Sisyphus.prototype.formElements = function( form ) {
 
 	for ( i = 0; i < textarea_list.length; i++ ) {
 		map.textarea.push( textarea_list[ i ] );
-	};
+	}
 
 	for ( i = 0; i < select_list.length; i++ ) {
 		map.select.push( select_list[ i ] );
-	};
+	}
 
 	for ( i = 0; i < input_list.length; i++ ) {
 		if ( Object.prototype.toString.call( map[ input_list[ i ].type ] ) === "[object Array]" ) {
 			map[ input_list[ i ].type ].push( input_list[ i ] );
 		}
-	};
+	}
 
 	return map;
 };
