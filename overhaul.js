@@ -22,11 +22,12 @@ Sisyphus.prototype.isSelectMultiple = function( element ) {
 };
 
 Sisyphus.prototype.protect = function( form ) {
-	var form_elements = this.formElements( form ), i, element, self = this;
+	var i, element, self = this;
+	this.mapFormElements( form );
 
-	for ( var key in form_elements ) {
-		for( i in form_elements[ key ] ) {
-			element = form_elements[ key ][ i ];
+	for ( var key in self.form_elements ) {
+		for( i in self.form_elements[ key ] ) {
+			element = self.form_elements[ key ][ i ];
 
 			element.addEventListener( "change" , function() {
 				self.saveToStorage( this );
@@ -34,15 +35,16 @@ Sisyphus.prototype.protect = function( form ) {
 		}
 	}
 
-	self.restoreFormData( form );
+	self.restoreFormData();
 };
 
-Sisyphus.prototype.restoreFormData = function( form ) {
-	var form_elements = this.formElements( form ), i, element, self = this;
+// TODO should accept form argument
+Sisyphus.prototype.restoreFormData = function() {
+	var i, element, self = this;
 
-	for ( var key in form_elements ) {
-		for( i in form_elements[ key ] ) {
-			element = form_elements[ key ][ i ];
+	for ( var key in self.form_elements ) {
+		for( i in self.form_elements[ key ] ) {
+			element = self.form_elements[ key ][ i ];
 
 			self.restoreElementValue( element );
 		}
@@ -167,13 +169,14 @@ Sisyphus.prototype.saveGroupElementToStorage = function( element ) {
 	localStorage.setItem( key, values );
 };
 
-Sisyphus.prototype.formElements = function( form ) {
+Sisyphus.prototype.mapFormElements = function( form ) {
 	var select_list = form.getElementsByTagName( "select" ),
 	textarea_list = form.getElementsByTagName( "textarea" ),
 	input_list = form.getElementsByTagName( "input" ),
+	self = this,
 	i;
 
-	var map = {
+	self.form_elements = {
 		select: [],
 		text: [],
 		textarea: [],
@@ -183,18 +186,18 @@ Sisyphus.prototype.formElements = function( form ) {
 	};
 
 	for ( i = 0; i < textarea_list.length; i++ ) {
-		map.textarea.push( textarea_list[ i ] );
+		self.form_elements.textarea.push( textarea_list[ i ] );
 	}
 
 	for ( i = 0; i < select_list.length; i++ ) {
-		map.select.push( select_list[ i ] );
+		self.form_elements.select.push( select_list[ i ] );
 	}
 
 	for ( i = 0; i < input_list.length; i++ ) {
-		if ( Object.prototype.toString.call( map[ input_list[ i ].type ] ) === "[object Array]" ) {
-			map[ input_list[ i ].type ].push( input_list[ i ] );
+		if ( Object.prototype.toString.call( self.form_elements[ input_list[ i ].type ] ) === "[object Array]" ) {
+			self.form_elements[ input_list[ i ].type ].push( input_list[ i ] );
 		}
 	}
 
-	return map;
+	return self.form_elements;
 };

@@ -38,15 +38,16 @@ describe("Sisyphus", function() {
 		} );
 	} );
 
-	describe( "formElements", function() {
+	describe( "mapFormElements", function() {
 		it( "should build a proper map of elements to protect", function() {
-			subject = sisyphus.formElements( form );
+			subject = sisyphus.mapFormElements( form );
 
 			expect( subject.text.length ).toEqual( 1 );
 			expect( subject.textarea.length ).toEqual( 1 );
 			expect( subject.select.length ).toEqual( 2 );
 			expect( subject.radio.length ).toEqual( 3 );
 			expect( subject.checkbox.length ).toEqual( 5 );
+			expect( subject ).toEqual( sisyphus.form_elements );
 		} );
 	} );
 
@@ -81,8 +82,9 @@ describe("Sisyphus", function() {
 
 	describe( "restoreFormData", function() {
 		it( "should invoke restore data for each form's element", function() {
+			sisyphus.mapFormElements( form );
 			spyOn( sisyphus, "restoreElementValue" );
-			sisyphus.restoreFormData( form );
+			sisyphus.restoreFormData();
 //			TODO count times
 			expect( sisyphus.restoreElementValue ).toHaveBeenCalled();
 		} );
