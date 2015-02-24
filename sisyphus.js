@@ -208,6 +208,15 @@
 					return target.find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" ).not( ":password" ).not( ":disabled" ).not( "[readonly]" );
 				},
 
+				getPrefix: function( field ){
+					// field should be a jQuery object representing a field
+					var self = this;
+					var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
+					var targetFieldIdAndName = field.attr( "id" ) + field.attr( "name" );					
+					var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + targetFieldIdAndName + self.options.customKeySuffix;
+					return prefix;
+				},
+				
 				/**
 				 * Bind saving data
 				 *
@@ -228,7 +237,7 @@
 								return true;
 							}
 							var field = $( this );
-							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeySuffix;
+							var prefix = self.getPrefix(field);
 							if ( field.is( ":text" ) || field.is( "textarea" ) ) {
 								if ( ! self.options.timeout ) {
 									self.bindSaveDataImmediately( field, prefix );
@@ -258,7 +267,7 @@
 								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
 								return true;
 							}
-							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeySuffix;
+							var prefix = self.getPrefix(field);
 							var value = field.val();
 
 							if ( field.is(":checkbox") ) {
@@ -317,7 +326,7 @@
 								return true;
 							}
 							var field = $( this );
-							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeySuffix;
+							var prefix = self.getPrefix(field);
 							var resque = self.browserStorage.get( prefix );
 							if ( resque !== null ) {
 								self.restoreFieldsData( field, resque );
@@ -489,7 +498,7 @@
 							return true;
 						}
 						var field = $( this );
-						var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeySuffix;
+						var prefix = self.getPrefix(field);
 						self.browserStorage.remove( prefix );
 						released = true;
 					} );
