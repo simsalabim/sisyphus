@@ -117,6 +117,7 @@
 						locationBased: false,
 						timeout: 0,
 						autoRelease: true,
+						onBeforeSave: function() {},
 						onSave: function() {},
 						onBeforeRestore: function() {},
 						onRestore: function() {},
@@ -248,54 +249,60 @@
 				 */
 				saveAllData: function() {
 					var self = this;
-					self.targets.each( function() {
-						var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
-						var multiCheckboxCache = {};
-
-						self.findFieldsToProtect( $( this) ).each( function() {
-							var field = $( this );
-							if ( $.inArray( this, self.options.excludeFields ) !== -1 || field.attr( "name" ) === undefined ) {
-								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
-								return true;
-							}
-							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeySuffix;
-							var value = field.val();
-
-							if ( field.is(":checkbox") ) {
-								if ( field.attr( "name" ).indexOf( "[" ) !== -1 ) {
-									if ( multiCheckboxCache[ field.attr( "name" ) ] === true ) {
-										return;
-									}
-									value = [];
-									$( "[name='" + field.attr( "name" ) +"']:checked" ).each( function() {
-										value.push( $( this ).val() );
-									} );
-									multiCheckboxCache[ field.attr( "name" ) ] = true;
-								} else {
-									value = field.is( ":checked" );
+					
+					// call onBeforeSave() before saving to see if autosave is disabled
+					var callback_result = self.options.onBeforeSave.call( self );
+					if ( callback_result === undefined || callback_result ) {
+					
+						self.targets.each( function() {
+							var targetFormIdAndName = $( this ).attr( "id" ) + $( this ).attr( "name" );
+							var multiCheckboxCache = {};
+	
+							self.findFieldsToProtect( $( this) ).each( function() {
+								var field = $( this );
+								if ( $.inArray( this, self.options.excludeFields ) !== -1 || field.attr( "name" ) === undefined ) {
+									// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
+									return true;
 								}
-								self.saveToBrowserStorage( prefix, value, false );
-							} else if ( field.is( ":radio" ) ) {
-								if ( field.is( ":checked" ) ) {
-									value = field.val();
-									self.saveToBrowserStorage( prefix, value, false );
-								}
-							} else {
-								if ( self.isCKEditorExists() ) {
-									var editor;
-									if ( editor = CKEDITOR.instances[ field.attr("name") ] || CKEDITOR.instances[ field.attr("id") ] ) {
-										editor.updateElement();
-										self.saveToBrowserStorage( prefix, field.val(), false);
+								var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + field.attr( "name" ) + self.options.customKeySuffix;
+								var value = field.val();
+	
+								if ( field.is(":checkbox") ) {
+									if ( field.attr( "name" ).indexOf( "[" ) !== -1 ) {
+										if ( multiCheckboxCache[ field.attr( "name" ) ] === true ) {
+											return;
+										}
+										value = [];
+										$( "[name='" + field.attr( "name" ) +"']:checked" ).each( function() {
+											value.push( $( this ).val() );
+										} );
+										multiCheckboxCache[ field.attr( "name" ) ] = true;
 									} else {
+										value = field.is( ":checked" );
+									}
+									self.saveToBrowserStorage( prefix, value, false );
+								} else if ( field.is( ":radio" ) ) {
+									if ( field.is( ":checked" ) ) {
+										value = field.val();
 										self.saveToBrowserStorage( prefix, value, false );
 									}
 								} else {
-									self.saveToBrowserStorage( prefix, value, false );
+									if ( self.isCKEditorExists() ) {
+										var editor;
+										if ( editor = CKEDITOR.instances[ field.attr("name") ] || CKEDITOR.instances[ field.attr("id") ] ) {
+											editor.updateElement();
+											self.saveToBrowserStorage( prefix, field.val(), false);
+										} else {
+											self.saveToBrowserStorage( prefix, value, false );
+										}
+									} else {
+										self.saveToBrowserStorage( prefix, value, false );
+									}
 								}
-							}
+							} );
 						} );
-					} );
-					self.options.onSave.call( self );
+						self.options.onSave.call( self );
+					}
 				},
 
 				/**
