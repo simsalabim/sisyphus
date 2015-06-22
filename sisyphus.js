@@ -350,7 +350,7 @@
 						field.removeAttr( "checked" );
 					} else if ( field.is( ":radio" ) ) {
 						if ( field.val() === resque ) {
-							field.attr( "checked", "checked" );
+							field.prop( "checked", true );
 						}
 					} else if ( field.attr( "name" ).indexOf( "[" ) === -1 ) {
 						field.val( resque );
