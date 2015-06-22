@@ -345,9 +345,9 @@
 						return false;
 					}
 					if ( field.is( ":checkbox" ) && resque !== "false" && field.attr( "name" ).indexOf( "[" ) === -1 ) {
-						field.attr( "checked", "checked" );
+						field.prop( "checked", true );
 					} else if( field.is( ":checkbox" ) && resque === "false" && field.attr( "name" ).indexOf( "[" ) === -1 ) {
-						field.removeAttr( "checked" );
+						field.prop( "checked", false );
 					} else if ( field.is( ":radio" ) ) {
 						if ( field.val() === resque ) {
 							field.prop( "checked", true );
