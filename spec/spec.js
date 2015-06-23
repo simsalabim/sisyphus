@@ -185,7 +185,7 @@ describe("jQuery.sisyphus", function() {
 
 	it( "should return a Sisyphus instance", function() {
 		var form = $( "#form1");
-		var identifier = form.attr( "id" ) + form.attr( "name" );
+		var identifier = '[id=' + form.attr( "id" ) + '][name=' + form.attr( "name" ) + ']';
 		var o =  $( "#form1" ).sisyphus(),
 				sisyphus = Sisyphus.getInstance( identifier );
 		expect( o ).toEqual( sisyphus );
@@ -200,7 +200,7 @@ describe("jQuery.sisyphus", function() {
 
 	it( "should protect matched forms with Sisyphus", function() {
 		var form = $( "#form1");
-		var identifier = form.attr( "id" ) + form.attr( "name" );
+		var identifier = '[id=' + form.attr( "id" ) + '][name=' + form.attr( "name" ) + ']';
 		spyOn( Sisyphus.getInstance( identifier ), "protect" );
 		$( "#form1" ).sisyphus(),
 		expect( Sisyphus.getInstance( identifier ).protect ).toHaveBeenCalled();
