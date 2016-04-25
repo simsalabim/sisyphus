@@ -122,6 +122,7 @@
 						locationBased: false,
 						timeout: 0,
 						autoRelease: true,
+						autoStopAfterRelease: true,
 						onBeforeSave: function() {},
 						onSave: function() {},
 						onBeforeRestore: function() {},
@@ -447,10 +448,10 @@
 				saveDataByTimeout: function() {
 					var self = this;
 					var targetForms = self.targets;
-					setTimeout( ( function() {
+					self.timeoutId = setTimeout( ( function() {
 						function timeout() {
 							self.saveAllData();
-							setTimeout( timeout, self.options.timeout * 1000 );
+							self.timeoutId = setTimeout( timeout, self.options.timeout * 1000 );
 						}
 						return timeout;
 					} )( targetForms ), self.options.timeout * 1000 );
@@ -514,6 +515,10 @@
 
 					if ( released ) {
 						self.options.onRelease.call( self );
+
+						if ( this.options.autoStopAfterRelease ) {
+							clearTimeout(self.timeoutId);
+						}
 					}
 				}
 
