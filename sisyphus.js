@@ -438,7 +438,7 @@
 				bindSaveDataOnChange: function( field ) {
 					var self = this;
 					field.change( function() {
-						self.saveAllData();
+						setTimeout(function () { self.saveAllData(); }, 0);
 					} );
 				},
 
