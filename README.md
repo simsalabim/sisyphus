@@ -15,3 +15,7 @@ Smashing Magazine article: http://coding.smashingmagazine.com/2011/12/05/sisyphu
 7. Send a pull request
 
 Author: Alexander Kaupanin
+
+# LICENSE
+
+MIT License.
