@@ -289,6 +289,8 @@
 								if ( field.is( ":checked" ) ) {
 									value = field.val();
 									self.saveToBrowserStorage( prefix, value, false );
+								} else {
+									self.saveToBrowserStorage( prefix, '', false );
 								}
 							} else {
 								if ( self.isCKEditorExists() ) {
