@@ -290,7 +290,7 @@
 									value = field.val();
 									self.saveToBrowserStorage( prefix, value, false );
 								} else {
-									self.saveToBrowserStorage( prefix, '', false );
+									self.browserStorage.remove( prefix );
 								}
 							} else {
 								if ( self.isCKEditorExists() ) {
