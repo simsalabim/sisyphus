@@ -127,7 +127,9 @@
 						autoRelease: true,
 						onBeforeSave: function() {},
 						onSave: function() {},
+						onBeforeRestoreAll: function() {},
 						onBeforeRestore: function() {},
+						onRestoreAll: function() {},
 						onRestore: function() {},
 						onRelease: function() {}
 					};
@@ -172,7 +174,7 @@
 						return false;
 					}
 
-					var callback_result = self.options.onBeforeRestore.call( self );
+					var callback_result = self.options.onBeforeRestoreAll.call( self );
 					if ( callback_result === undefined || callback_result ) {
 						self.restoreAllData();
 					}
@@ -321,26 +323,67 @@
 
 					self.targets.each( function() {
 						var target = $( this );
-						var targetFormIdAndName = getElementIdentifier( $( this ) );
 
-						self.findFieldsToProtect( target ).each( function() {
-							if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
-								// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
-								return true;
-							}
-							var field = $( this );
-							var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + getElementIdentifier( field ) + self.options.customKeySuffix;
-							var resque = self.browserStorage.get( prefix );
-							if ( resque !== null ) {
-								self.restoreFieldsData( field, resque );
-								restored = true;
-							}
-						} );
+						if ( self.restoreData(target) ) {
+							restored = true;
+						}
 					} );
 
 					if ( restored ) {
-						self.options.onRestore.call( self );
+						self.options.onRestoreAll.call( self );
 					}
+				},
+
+				restoreData: function ( target ) {
+					var self = this;
+
+					if ( self.dataIsRestorable( target ) ) {
+						var callback_result = self.options.onBeforeRestore.call( self, target );
+
+						if ( callback_result === undefined || callback_result ) {
+							var targetFormIdAndName = getElementIdentifier( target );
+
+							self.findFieldsToProtect( target ).each( function() {
+								if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
+									// Returning non-false is the same as a continue statement in a for loop; it will skip immediately to the next iteration.
+									return true;
+								}
+								var field = $( this );
+								var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + getElementIdentifier( field ) + self.options.customKeySuffix;
+								var resque = self.browserStorage.get( prefix );
+								if ( resque !== null ) {
+									self.restoreFieldsData( field, resque );
+									self.options.onRestore.call( self, target );
+								}
+							} );
+						}
+
+						return true;
+					} else {
+						return false;
+					}
+				},
+
+				dataIsRestorable: function ( target ) {
+					var self = this;
+					var restorable = false;
+					var targetFormIdAndName = getElementIdentifier( target );
+
+					self.findFieldsToProtect( target ).each( function() {
+						if ( $.inArray( this, self.options.excludeFields ) !== -1 ) {
+							return true;
+						}
+
+						var field = $( this );
+						var prefix = (self.options.locationBased ? self.href : "") + targetFormIdAndName + getElementIdentifier( field ) + self.options.customKeySuffix;
+						var resque = self.browserStorage.get( prefix );
+						if ( resque !== null ) {
+							restorable = true;
+							return false;
+						}
+					} );
+
+					return restorable;
 				},
 
 				/**
