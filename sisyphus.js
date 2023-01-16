@@ -166,7 +166,7 @@
 						this.href = location.hostname + location.pathname + location.search + location.hash;
 					}
 					this.targets = $.merge( this.targets, targets );
-					this.targets = $.unique( this.targets );
+					this.targets = $.uniqueSort( this.targets );
 					this.targets = $( this.targets );
 					if ( ! this.browserStorage.isAvailable() ) {
 						return false;
@@ -439,7 +439,7 @@
 				 */
 				bindSaveDataOnChange: function( field ) {
 					var self = this;
-					field.change( function() {
+					field.on( "change", function() {
 						self.saveAllData();
 					} );
 				},
@@ -471,7 +471,7 @@
 					self.targets.each( function() {
 						var target = $( this );
 						var formIdAndName = getElementIdentifier( target );
-						$( this ).bind( "submit reset", function() {
+						$( this ).on( "submit reset", function() {
 							self.releaseData( formIdAndName, self.findFieldsToProtect( target ) );
 						} );
 					} );
